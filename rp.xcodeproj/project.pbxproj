@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		692226D01EFFD2D8008A59CF /* tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 692226CE1EFFD2D8008A59CF /* tests.cpp */; };
+		692226D31F0050CB008A59CF /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 692226D21F0050CA008A59CF /* Makefile */; };
 		6931C7681E59B5CC003A0A7D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6931C7671E59B5CC003A0A7D /* main.cpp */; };
+		6931C7701E59B616003A0A7D /* simple_avoiders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6931C76E1E59B616003A0A7D /* simple_avoiders.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +26,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		692226CE1EFFD2D8008A59CF /* tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cpp; sourceTree = "<group>"; };
+		692226CF1EFFD2D8008A59CF /* tests.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tests.hpp; sourceTree = "<group>"; };
+		692226D11F0039CA008A59CF /* tests.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tests.txt; sourceTree = "<group>"; };
+		692226D21F0050CA008A59CF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; usesTabs = 1; };
 		6931C7641E59B5CC003A0A7D /* rp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rp; sourceTree = BUILT_PRODUCTS_DIR; };
 		6931C7671E59B5CC003A0A7D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		6931C76E1E59B616003A0A7D /* simple_avoiders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simple_avoiders.cpp; sourceTree = "<group>"; };
+		6931C76F1E59B616003A0A7D /* simple_avoiders.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simple_avoiders.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +66,13 @@
 		6931C7661E59B5CC003A0A7D /* rp */ = {
 			isa = PBXGroup;
 			children = (
+				692226D21F0050CA008A59CF /* Makefile */,
 				6931C7671E59B5CC003A0A7D /* main.cpp */,
+				692226CE1EFFD2D8008A59CF /* tests.cpp */,
+				692226CF1EFFD2D8008A59CF /* tests.hpp */,
+				6931C76E1E59B616003A0A7D /* simple_avoiders.cpp */,
+				6931C76F1E59B616003A0A7D /* simple_avoiders.hpp */,
+				692226D11F0039CA008A59CF /* tests.txt */,
 			);
 			path = rp;
 			sourceTree = "<group>";
@@ -120,7 +135,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6931C7701E59B616003A0A7D /* simple_avoiders.cpp in Sources */,
 				6931C7681E59B5CC003A0A7D /* main.cpp in Sources */,
+				692226D31F0050CB008A59CF /* Makefile in Sources */,
+				692226D01EFFD2D8008A59CF /* tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +235,7 @@
 		6931C76C1E59B5CC003A0A7D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				DEVELOPMENT_TEAM = 55RLN4FDHU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -225,7 +244,9 @@
 		6931C76D1E59B5CC003A0A7D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				DEVELOPMENT_TEAM = 55RLN4FDHU;
+				"OTHER_CPLUSPLUSFLAGS[arch=*]" = "-Ofast";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -249,6 +270,7 @@
 				6931C76D1E59B5CC003A0A7D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
