@@ -30,6 +30,7 @@
 		692226CF1EFFD2D8008A59CF /* tests.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tests.hpp; sourceTree = "<group>"; };
 		692226D11F0039CA008A59CF /* tests.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tests.txt; sourceTree = "<group>"; };
 		692226D21F0050CA008A59CF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; usesTabs = 1; };
+		692226D51F019401008A59CF /* permutation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = permutation.hpp; sourceTree = "<group>"; };
 		6931C7641E59B5CC003A0A7D /* rp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rp; sourceTree = BUILT_PRODUCTS_DIR; };
 		6931C7671E59B5CC003A0A7D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		6931C76E1E59B616003A0A7D /* simple_avoiders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simple_avoiders.cpp; sourceTree = "<group>"; };
@@ -73,6 +74,7 @@
 				6931C76E1E59B616003A0A7D /* simple_avoiders.cpp */,
 				6931C76F1E59B616003A0A7D /* simple_avoiders.hpp */,
 				692226D11F0039CA008A59CF /* tests.txt */,
+				692226D51F019401008A59CF /* permutation.hpp */,
 			);
 			path = rp;
 			sourceTree = "<group>";
