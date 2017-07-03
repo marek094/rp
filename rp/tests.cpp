@@ -1,8 +1,8 @@
 
-#include "avoiders.hpp"
-#include "permutation_set.hpp"
-#include "simple_avoiders.hpp"
-#include "permutation.hpp"
+#include "bitwise/avoiders.hpp"
+#include "bitwise/permutation_set.hpp"
+#include "bitwise/permutation.hpp"
+#include "simple/simple_avoiders.hpp"
 #include "tests.hpp"
 #include <iostream>
 #include <iomanip>

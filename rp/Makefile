@@ -11,13 +11,13 @@ clean:
 	@-rm main.o simple_avoiders.o main ||: 
 
 
-main.o: main.cpp simple_avoiders.hpp
+main.o: main.cpp simple/simple_avoiders.hpp
 	$(CC) $(FLAGS) -c main.cpp
 
-tests.o: tests.cpp simple_avoiders.hpp
+tests.o: tests.cpp simple/simple_avoiders.hpp
 	$(CC) $(FLAGS) -c tests.cpp
 
-simple_avoiders.o: simple_avoiders.cpp simple_avoiders.hpp
-	$(CC) $(FLAGS) -c simple_avoiders.cpp
+simple_avoiders.o: simple/simple_avoiders.cpp simple/simple_avoiders.hpp
+	$(CC) $(FLAGS) -c simple/simple_avoiders.cpp
 
 

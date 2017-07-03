@@ -1,7 +1,7 @@
 #ifndef tests_hpp
 #define tests_hpp
 
-#include "avoiders.hpp"
+#include "bitwise/avoiders.hpp"
 #include <iostream>
 #include <string>
 #include <algorithm>
