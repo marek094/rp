@@ -8,7 +8,7 @@
 #include <queue>
 #include <algorithm>
 
-namespace rp {
+namespace rp_simple {
     
     bool is_avoider(const_set avoiders,
                     const_bounded_set patterns,
@@ -105,7 +105,14 @@ namespace rp {
     
 };
 
-namespace rp {
+namespace rp_simple {
+    
+    size_t count_hits(const_perm permutation, const_bounded_set patterns) {
+        hits_table table;
+        auto&& hits = count_hits(permutation, patterns, table);
+        assert( hits.size() > 0);
+        return hits[0];
+    }
     
     std::vector< size_t>& count_hits(const_perm permutation,
                                   const_bounded_set patterns,
@@ -123,8 +130,7 @@ namespace rp {
                 hits.at(i) = 1;
             } else if (i < permutation.size()) {
                 perm down_permutation = perm_down(permutation, i);
-                auto down_hits = count_hits(down_permutation,
-                                            patterns, table);
+                auto&& down_hits = count_hits(down_permutation, patterns, table);
                 
                 hits.at(i) = down_hits.at(i) + hits.at(i+1);
             }
@@ -133,24 +139,124 @@ namespace rp {
         return hits;
     }
     
-    size_t count_hits(const_perm permutation, const_bounded_set patterns) {
-        hits_table table;
-        auto hits = count_hits(permutation, patterns, table);
-        assert( hits.size() > 0);
-        return hits[0];
-    }
 
 };
 
+namespace rp_simple {
+    
+    constexpr auto UNDEFINED = -1;
+    
+    bool count_hits_bounded(const_set bound_avoiders,
+                            const_perm permutation, const_bounded_set patterns, size_t bound) {
+        hits_table table;
+        auto&& hits = count_hits_bounded(bound_avoiders, permutation, patterns, bound, table);
+        assert( hits.size() > 0 );
+        assert( hits[0] != rp_simple::UNDEFINED);
+        return hits[0] > bound;
+    }
+    
+    
+    std::vector< size_t>& count_hits_bounded(const_set bound_avoiders,
+                                             const_perm permutation,
+                                             const_bounded_set patterns,
+                                             size_t bound,
+                                             hits_table& table)
+    {
+        
+        std::vector< size_t>& hits = table[permutation];
+        
+        if (!hits.empty()) return hits;
+        hits.resize(patterns.bound()+2, 0);
+        
+        for (int i=(int)patterns.bound(); i>=0; --i) {
+            if (i == permutation.size() &&
+                patterns.find(permutation) != patterns.end()) {
+                hits.at(i) = 1;
+            } else if (i < permutation.size()) {
+                perm down_permutation = perm_down(permutation, i);
                 
+                auto it = bound_avoiders.find(down_permutation);
+                if (it == bound_avoiders.end()) {
+                    for (int r = (int)patterns.bound()+1; r >= i+1; --r) {
+                        hits.at(i) = UNDEFINED;
+                    }
+                    return hits;
+                }
                 
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                auto&& down_hits = count_hits(down_permutation, patterns, table);
+                hits.at(i) = down_hits.at(i) + hits.at(i+1);
+            }
+        }
+        
+        assert(hits[0] != UNDEFINED);
+        if (hits.at(0) > bound) {
+            for (int i = (int)patterns.bound()+1; i>=0; --i) {
+                hits.at(i) = UNDEFINED;
+            }
+        }
+        
+        return hits;
+    }
+  
+    set build_perms_with_bounded_hits(const_bounded_set patterns, size_t n, size_t bound) {
+        set bound_avoiders;
+        
+        if (n == 0) return bound_avoiders;
+        
+        std::queue<perm> unprocessed;
+        if (patterns.find(IDENTITY) == patterns.end() && bound > 0) {
+            unprocessed.push(IDENTITY);
+            bound_avoiders.insert(IDENTITY);
+        }
+        
+        if (n == 1) return bound_avoiders;
+        
+        while (! unprocessed.empty()) {
+            perm permutation = std::move(unprocessed.front());
+            unprocessed.pop();
+            
+            for (int i=0; i < permutation.size()+1; ++i) {
+                perm up_permutation = perm_up(permutation, i);
+                if (count_hits_bounded(bound_avoiders, permutation, patterns, bound)) {
+                    if (up_permutation.size() < n) {
+                        unprocessed.push(up_permutation);
+                    }
+                    bound_avoiders.insert(std::move(up_permutation));
+                }
+            }
+            
+        }
+        
+        return bound_avoiders;
+    }
+    
+};
+
+/*
+ while (!unprocessed.empty()) {
+ perm permutation = std::move(unprocessed.front());
+ unprocessed.pop();
+ 
+ for (int i=0; i<permutation.size()+1; i++) {
+ perm up_permutation = perm_up(permutation, i);
+ if (!is_avoider(avoiders, patterns, up_permutation))
+ continue;
+ 
+ auto ins = avoiders.insert(up_permutation);
+ assert(ins.second == true); // inserted new
+ 
+ if (up_permutation.size() < n) {
+ unprocessed.push(up_permutation);
+ }
+ 
+ }
+ }
+ */
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 

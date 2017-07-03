@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <cassert>
 
-namespace rp {
+namespace rp_simple {
   
     // simple types
     using perm = std::string;
@@ -35,38 +35,49 @@ namespace rp {
     set build_avoiders(const_bounded_set patterns, size_t n);
     
     // "Algorithm 3"
-    size_t count_hits(const_perm, const_bounded_set);
+    size_t count_hits(const_perm, const_bounded_set patterns);
     std::vector< size_t>& count_hits(const_perm,
                                      const_bounded_set, hits_table&);
     
+    // "Algorithm 5"
+    bool count_hits_bounded(const_set bound_avoiders,
+                            const_perm, const_bounded_set patterns, size_t bound);
+    std::vector< size_t>& count_hits_bounded(const_set bound_avoiders,
+                                            const_perm,
+                                            const_bounded_set,
+                                            size_t, hits_table&);
+    
+    set build_perms_with_bounded_hits(const_bounded_set patterns,
+                                      size_t n, size_t bound);
+    
     
     // set extended with bound
-    class non_consistent_bounded_set : public rp::set {
+    class non_consistent_bounded_set : public set {
     public:
         
-        non_consistent_bounded_set() : rp::set() {}
+        non_consistent_bounded_set() : set() {}
         
         non_consistent_bounded_set(std::initializer_list<value_type> arg)
-            : rp::set(arg) { update_bound(); }
+            : set(arg) { update_bound(); }
         
         template<class X>
         non_consistent_bounded_set(X && arg)
-            : rp::set(std::forward< X>(arg)) { update_bound(); }
+            : set(std::forward< X>(arg)) { update_bound(); }
         
         template<class X>
         non_consistent_bounded_set(X && arg, size_type bound)
-            : rp::set(std::forward< X>(arg)), bound_(bound) {}
+            : set(std::forward< X>(arg)), bound_(bound) {}
         
         template<class Iter>
         non_consistent_bounded_set(Iter first, Iter last)
-            : rp::set(first, last) { update_bound(); }
+            : set(first, last) { update_bound(); }
     
         size_type bound() const { return bound_; }
         
         void update_bound() {
             //auto old_bound = bound_;
             bound_ = 0;
-            for (const rp::perm &p : *this) {
+            for (const perm &p : *this) {
                 if (p.size() > bound_) {
                     bound_ = p.size();
                 }

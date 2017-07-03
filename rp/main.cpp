@@ -15,15 +15,21 @@
 #include <map>
 #include <memory>
 #include <unordered_map>
+#include <tuple>
 
 using namespace std;
-using namespace rp;
+using namespace rp_simple;
 
 void test_avoiders();
 void test_up_down_perm();
 void test_count_hits();
 void test_bounded_set();
+//void test_count_hits_bounded();
 
+void test_known_sequences();
+
+int f(int a, int b) { return a > b ? a : b; }
+int mul(int a) { return a*4; }
 
 int main(int argc, const char * argv[]) {
 
@@ -33,6 +39,9 @@ int main(int argc, const char * argv[]) {
     test_up_down_perm();
     test_count_hits();
     test_bounded_set();
+//    test_count_hits_bounded();
+    
+    test_known_sequences();
     cerr << "...tests completed.\n" << endl;
 #endif
     
@@ -52,14 +61,20 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
-template <class T>
-inline void run_test(T expected, std::function<T()> f) {
-    static int tid = 0; ++tid;
-    T value = f();
-    if (value == expected) return;
+template<class Container, class Function>
+inline void run_tests(Container tests, Function f) {
+    constexpr auto last_element = std::tuple_size<typename Container::value_type>::value - 1;
+    static int tid = 0;
     
-    cerr << "Test #" << tid << " (WA) "
-    << "expected: " << expected << ",\tgiven " << value << endl;
+    for (auto && test : tests) {
+        ++tid;
+        auto value = f(test);
+        auto expected = get<last_element>(test);
+        if (value == expected) return;
+        
+        cerr << "Test #" << tid << " (WA) "
+        << "expected: " << expected << ",\tgiven " << value << endl;
+    }
 }
 
 void test_avoiders() {
@@ -74,11 +89,9 @@ void test_avoiders() {
         test{ {"132"}, 4, 1+2+5+14},
     };
     
-    for (auto&& t: tests) {
-        run_test< size_t>(get<2>(t), [&t](){
-            return build_avoiders(get<0>(t), get<1>(t)).size();
-        });
-    }
+    run_tests(tests, [](test& t){
+        return build_avoiders(get<0>(t), get<1>(t)).size();
+    });
     
 }
 
@@ -97,9 +110,10 @@ void test_bounded_set() {
     
     tests.emplace_back(s2, 5);
     
-    for (auto&& t: tests) {
-        run_test< size_t>(get<1>(t), [&t](){ return get<0>(t).bound();} );
-    }
+    run_tests(tests, [](test& t){
+        return get<0>(t).bound();
+    });
+
 }
 
 void test_up_down_perm() {
@@ -110,10 +124,9 @@ void test_up_down_perm() {
         test{"25341", 4, "253461"},
     };
     
-    for (auto&& t : up_tests) {
-        run_test< perm>(get<2>(t), [&t](){
-            return perm_up(get<0>(t), get<1>(t)); });
-    }
+    run_tests(up_tests, [](test& t){
+        return perm_up(get<0>(t), get<1>(t));
+    });
     
     vector< test> down_tests {
         test{"12345", 0, "1234"},
@@ -121,12 +134,11 @@ void test_up_down_perm() {
         test{"25431", 2, "2431"},
     };
     
-    for (auto&& t : down_tests) {
-        run_test< perm>(get<2>(t), [&t](){
-            return perm_down(get<0>(t), get<1>(t));
-        });
-    }
+    run_tests(down_tests, [](test& t){
+        return perm_down(get<0>(t), get<1>(t));
+    });
 }
+
 
 void test_count_hits() {
     
@@ -139,10 +151,32 @@ void test_count_hits() {
         test{"15432", {"132"}, 6},
     };
     
-    for (auto&& t : tests) {
-        run_test< size_t>(get<2>(t), [&t](){
-            hits_table ht;
-            return count_hits(get<0>(t), get<1>(t), ht)[0];;
-        });
-    }
+    run_tests(tests, [](test& t) {
+        return count_hits(get<0>(t), get<1>(t));
+    });
+    
 }
+
+void test_build_patterns_with_bounded_hits() {
+    
+    // tuple< permutation, patterns, bound, result;
+    using test = tuple< perm, bounded_set, size_t, size_t>;
+    vector< test> tests{
+        test{"1234", {}, 2, 2},
+    };
+    
+}
+
+void test_known_sequences() {
+    
+    
+    
+}
+
+
+
+
+
+
+
+

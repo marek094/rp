@@ -23,6 +23,12 @@ namespace rp {
         return (a/b + (a%b > 0 ? 1 : 0));
     }
     
+    // constexpr unsigned defaultMAXSIZE(unsigned letter);
+    // helper function used for default letter
+    constexpr unsigned defaultMAXSIZE(unsigned letter) {
+        return 1u << letter;
+    }
+    
     // ull maskOne(unsigned a);
     // helper for computing mask with 'a' ones from begining
     // it is expected to be inlined
@@ -34,17 +40,34 @@ namespace rp {
     // Class Permutation
     // - LETTER - number of bits representing one letter
     // - MAXSIZE - maximal size of permutation; default is computed from LETTER width
-    template <unsigned LETTER, unsigned MAX_SIZE = (1u<<LETTER)>
+    template <unsigned _LETTER, unsigned _MAX_SIZE = defaultMAXSIZE(_LETTER)>
     class Permutation {
+    public:
+        static constexpr auto MAX_SIZE = _MAX_SIZE;
+        static constexpr auto LETTER = _LETTER;
+        static constexpr auto WORD = sizeof(ull) * 8;
+        static constexpr auto LETTERS_PER_WORD = divUp(WORD, LETTER);
+        static constexpr auto WORDS = divUp(MAX_SIZE, LETTERS_PER_WORD);
         
         static_assert(sizeof(ull) == 8, "64-bit unsigned long long is required");
         static_assert( ((LETTER - 1) & LETTER) == 0 && LETTER > 0,
                       "LETTER template parameter is required to be power of 2");
         static_assert( (1u<<LETTER) >= MAX_SIZE,  "LETTER is too small to construct MAXSIZE-permutation");
     
-    public:
+        using Self = Permutation<LETTER, MAX_SIZE>;
+
         Permutation() {
             clearData();
+        }
+        
+        template <class Iterator>
+        Permutation(Iterator begin, Iterator end) {
+            clearData();
+            int pos = 0;
+            for (Iterator it = begin; it != end; ++it) {
+                this->up(pos, *it);
+                ++pos;
+            }
         }
         
         // void up(unsigned pos, unsigned size);
@@ -115,12 +138,37 @@ namespace rp {
         }
        
         // access the nth letter
-        unsigned operator[](unsigned pos) {
+        unsigned operator[](unsigned pos) const {
             const unsigned insoff = pos/LETTERS_PER_WORD;
             const unsigned inspos = (pos%LETTERS_PER_WORD) * LETTER;
             return (unsigned)(data[ insoff ] >> inspos) & maskOne(LETTER);
             
         }
+        
+        bool operator==(const Self& p) const {
+            for (int i=0; i<WORDS; ++i) {
+                if (data[i] != p.data[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        ull getWord(unsigned offset) const {
+            return data[ offset ];
+        }
+        
+        // static constexpr Self getIdentity();
+        // generate identity permutation
+        // in static context
+        static constexpr Self getIdentity() {
+            Self p;
+            for (int i = 0; i < MAX_SIZE; ++i) {
+                p.up(i, i);
+            }
+            return p;
+        }
+        
     private:
         void clearData() {
             for (int i=0; i<WORDS; i++) {
@@ -128,27 +176,17 @@ namespace rp {
             }
         }
         
-    public:
-        static constexpr auto WORD = sizeof(ull) * 8;
-        static constexpr auto LETTERS_PER_WORD = divUp( sizeof(ull) * 8, LETTER);
-        static constexpr auto WORDS = divUp(MAX_SIZE, LETTERS_PER_WORD);
-        static constexpr unsigned getMAXSIZE() {
-            return MAX_SIZE;
-        }
-        
-        using ull = unsigned long long;
         ull data[ WORDS ];
     };
     
     // operator for printing permutation
     template <unsigned LETTER, unsigned MAX_SIZE>
-    std::ostream& operator<<(std::ostream& os, Permutation<LETTER, MAX_SIZE>& p) {
+    std::ostream& operator<<(std::ostream& os, const Permutation<LETTER, MAX_SIZE>& p) {
         for (int i=0; i<MAX_SIZE; ++i) {
             os << p[i] << " ";
         }
         return os;
     }
-    
     
 }
 

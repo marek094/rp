@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -Wall -std=c++11 -Ofast 
+FLAGS = -Wall -std=c++14 -Ofast
 
 main: main.o simple_avoiders.o
 	$(CC) -o main main.o simple_avoiders.o
