@@ -136,6 +136,38 @@ namespace rp {
                 }
             }
         }
+        
+        void swapNext(unsigned pos) {
+            const unsigned insoff = pos/LETTERS_PER_WORD;
+            const unsigned inspos = (pos%LETTERS_PER_WORD) * LETTER;
+            if (inspos == (LETTERS_PER_WORD-1)*LETTER) {
+                assert(insoff < WORDS-1);
+                const ull last_letter_pos = (LETTERS_PER_WORD-1)*LETTER;
+                
+                const ull mask_st = maskOne(LETTER) << last_letter_pos;
+                const ull mask_nd = maskOne(LETTER);
+                
+                const ull st = mask_st & data[ insoff ];
+                const ull nd = mask_nd & data[ insoff+1 ];
+                
+                data[ insoff ] &= ~mask_st;
+                data[ insoff+1 ] &= ~mask_nd;
+                
+                data[ insoff ] |= nd << last_letter_pos;
+                data[ insoff+1 ] |= st >> last_letter_pos;
+            } else {
+                const ull letter_pos = pos*LETTER;
+                const ull mask_st = maskOne(LETTER) << letter_pos;
+                const ull mask_nd = maskOne(LETTER) << (letter_pos+LETTER);
+                
+                const ull st = mask_st & data[ insoff ];
+                const ull nd = mask_nd & data[ insoff];
+                
+                data[ insoff ] &= ~(mask_st | mask_nd);
+                data[ insoff ] |= (st << LETTER) | (nd >> LETTER);
+            }
+            
+        }
        
         // access the nth letter
         unsigned operator[](unsigned pos) const {

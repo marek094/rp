@@ -57,18 +57,18 @@ namespace rp {
         
         while ( !unprocessed.empty() ) {
             Permutation& perm = unprocessed.front();
+            perm.up(0, actual_size);
             
             for (int i = 0; i < actual_size+1; ++i) {
-                // TODO: make this simple
-                Permutation perm_up = perm; perm_up.up(i, actual_size);
-                if (!isAvoider(avoiders, patterns, perm_up, actual_size))
+                if (i > 0) perm.swapNext(i-1);
+                if (!isAvoider(avoiders, patterns, perm, actual_size))
                     continue;
                 
-                auto ins = avoiders.insert(perm_up);
+                auto ins = avoiders.insert(perm);
                 assert(ins.second == true); // inserted new
                 
                 if (actual_size+1 < Permutation::MAX_SIZE) {
-                    unprocessed.push(perm_up);
+                    unprocessed.push(perm);
                 }
                 next_size_cnt++;
             }

@@ -50,20 +50,30 @@ void test_permutation_set() {
     PermutationSet<4> s;
 }
 
+void test_permutation_swap() {
+    std::vector<unsigned> vec{1,0};
+    rp::Permutation<8> p( vec.begin(), vec.end() );
+    
+    std::cout << p << std::endl;
+    p.swapNext(0);
+//    p.swapNext(1);
+    std::cout << p << std::endl;
+}
 
 int main(int argc, char *argv[]) {
-
-    test_permutation_set();
+//    
+//    test_permutation_swap();
+//    return 0;
     
-    if (argc < 3) {
-        std::cerr << "Help: ./tests tests_file_path max_permutaiton_length" << std::endl;
+    if (argc < 2) {
+        std::cerr << "Help: ./tests tests_file_path" << std::endl;
         return 0;
     }
     std::ifstream ifs{argv[1]};
-    int length = atoi(argv[2]);
-    std::cerr << "file " << argv[1] << "\tmax_len " << length << std::endl;
-//    bool passed = run_tests_simple(ifs, length);
-    bool passed = run_tests_bitwise<4,13>(ifs);
+//    int length = atoi(argv[2]);
+    std::cerr << "file " << argv[1] /**< "\tmax_len " << length*/ << std::endl;
+//    bool passed = run_tests_simple(ifs, 10);
+    bool passed = run_tests_bitwise<4,10>(ifs);
     std::cout << passed << std::endl;
     return 0;
 }
