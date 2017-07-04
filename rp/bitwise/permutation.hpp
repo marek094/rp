@@ -52,7 +52,7 @@ namespace rp {
         static_assert(sizeof(ull) == 8, "64-bit unsigned long long is required");
         static_assert( ((LETTER - 1) & LETTER) == 0 && LETTER > 0,
                       "LETTER template parameter is required to be power of 2");
-        static_assert( (1u<<LETTER) >= MAX_SIZE,  "LETTER is too small to construct MAXSIZE-permutation");
+        static_assert( (1ull<<LETTER) >= MAX_SIZE,  "LETTER is too small to construct MAXSIZE-permutation");
     
         using Self = Permutation<LETTER, MAX_SIZE>;
 

@@ -12,6 +12,7 @@
 #include "permutation.hpp"
 #include <unordered_set>
 #include <functional>
+#include <algorithm>
 
 namespace rp {
     
@@ -22,6 +23,12 @@ namespace rp {
 
         PermutationSet() {}
 
+        template <class P>
+        auto insert(P&& p, unsigned size) {
+            bound = std::max(bound, size);
+            return table.insert(std::forward<P>(p));
+        }
+        
         template <class P>
         auto insert(P&& p) {
             return table.insert(std::forward<P>(p));
@@ -43,6 +50,10 @@ namespace rp {
             return table.empty();
         }
         
+        auto getBound() const {
+            return bound;
+        }
+        
     private:
         
         struct Hash {
@@ -58,6 +69,7 @@ namespace rp {
             std::hash<ull> hash_function{};
         };
         
+        unsigned bound = 0;
         std::unordered_set<Permutation, Hash> table;
     };
 
