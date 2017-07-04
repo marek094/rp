@@ -41,6 +41,10 @@ namespace rp {
         auto&& getTable() {
             return table;
         }
+        
+        auto&& getTable() const {
+            return table;
+        }
 
         auto size() const {
             return table.size();

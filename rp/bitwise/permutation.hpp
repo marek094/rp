@@ -130,8 +130,9 @@ namespace rp {
                     // get the right letter
                     const ull letter = (data[i] >> LETTER*j) & maskOne(LETTER);
                     // replace it
-                    if (letter >= delvalue) {
+                    if (letter > delvalue) {
                         data[i] ^= (letter ^ (letter-1)) << LETTER*j;
+//                        if (letter == delvalue) std::cout << *this << std::endl;
                     }
                 }
             }

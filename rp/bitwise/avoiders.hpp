@@ -37,9 +37,10 @@ namespace rp {
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
     std::array<int, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
+
         PermutationSet avoiders, next_avoiders;
         std::array<int, Permutation::MAX_SIZE> sizes_cnt;
-        for (int& size_cnt : sizes_cnt) size_cnt = 0;
+        sizes_cnt[1] = 1;
         
         if (Permutation::MAX_SIZE == 0) return sizes_cnt;
         
@@ -51,18 +52,17 @@ namespace rp {
         
         if (Permutation::MAX_SIZE == 1) return sizes_cnt;
         
-        int actual_size = 1;
+        int actual_size = 2;
         int actual_size_cnt = 1;
         int next_size_cnt = 0;
         
         while ( !unprocessed.empty() ) {
             Permutation& perm = unprocessed.front();
-            perm.up(0, actual_size);
+            perm.up(0, actual_size-1);
             
-            for (int i = 0; i < actual_size+1; ++i) {
+            for (int i = 0; i < actual_size; ++i) {
                 if (i > 0) perm.swapNext(i-1);
-                
-                
+
                 if (!isAvoider(avoiders, patterns, perm, actual_size))
                     continue;
                 
@@ -79,6 +79,14 @@ namespace rp {
             actual_size_cnt--;
             if (actual_size_cnt <= 0) {
                 assert(actual_size_cnt == 0);
+                
+//                if (actual_size < 5) {
+//                    std::cout << "Avoides " << actual_size << std::endl;
+//                    for (auto&& p : avoiders.getTable()) {
+//                        std::cout << p << std::endl;
+//                    }
+//                }
+                
                 avoiders.getTable().clear();
                 std::swap( avoiders, next_avoiders);
                 

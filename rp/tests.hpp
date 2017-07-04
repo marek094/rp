@@ -69,7 +69,7 @@ inline bool run_tests_bitwise( std::istream& is) {
         rp::PermutationSet<LETTER, SIZE> patterns;
         for (std::string pattern_string; pss >> pattern_string; ) {
             std::cout << pattern_string << std::endl;
-            for (char& c: pattern_string) c -= '0';
+            for (char& c: pattern_string) c -= '1';
             patterns.insert(
                             rp::Permutation<LETTER, SIZE>{ pattern_string.begin(), pattern_string.end()},
                             pattern_string.size()
