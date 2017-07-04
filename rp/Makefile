@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -Wall -std=c++14 -Ofast -march=native
+FLAGS = -Wall -std=c++14 -O3 -march=native
 
 main: main.o
 	$(CC) -o main main.o

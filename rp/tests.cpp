@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 //    int length = atoi(argv[2]);
     std::cerr << "file " << argv[1] /**< "\tmax_len " << length*/ << std::endl;
 //    bool passed = run_tests_simple(ifs, 10);
-    bool passed = run_tests_bitwise<4,10>(ifs);
+    bool passed = run_tests_bitwise<4,5>(ifs);
     std::cout << passed << std::endl;
     return 0;
 }
