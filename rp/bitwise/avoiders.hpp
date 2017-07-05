@@ -17,7 +17,7 @@
 #include <utility>
 #include <algorithm>
 
-#define DEBUG 1
+#define DEBUG 0
 
 namespace rp {
     
@@ -70,16 +70,17 @@ namespace rp {
             std::array<bool, Permutation::MAX_SIZE> is_avoider;
             is_avoider.fill(true);
             
-            for (int j=0; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
+            for (int j=1; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
                 Permutation down = perm; down.down(j);
 #if DEBUG
                 std::cout << "down\t" << down << std::endl;
 #endif
                 int k = -1;
                 for (int i = 0; i < actual_size; ++i) {
-                    if (i==j) continue;
-                    if (k >= 0) down.swapNext(k);
-                    k++;
+                    if (i!=j) {
+                        if (k >= 0) down.swapNext(k);
+                        k++;
+                    }
 #if DEBUG
                     std::cout << "down_\t" << down <<"["<<i<< "," <<j<<"]";
                     if ( is_avoider[i] == false )
@@ -126,13 +127,13 @@ namespace rp {
             if (actual_size_cnt <= 0) {
                 assert(actual_size_cnt == 0);
                 
-//                if (actual_size < 5) {
+//                if (actual_size < 6) {
 //                    std::cout << "Avoides " << actual_size << std::endl;
 //                    for (auto&& p : avoiders.getTable()) {
 //                        std::cout << p << std::endl;
 //                    }
 //                }
-                
+//                
 //                std::cout << "\t" << next_size_cnt << " " << next_avoiders.size() << std::endl;
                 
                 avoiders.getTable().clear();
