@@ -20,22 +20,7 @@
 #define DEBUG 0
 
 namespace rp {
-    
-    template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
-    bool isAvoider(const PermutationSet& avoiders, const PermutationSet& patterns,
-                   const Permutation& permutation, unsigned size) {
-        if ( patterns.lookup(permutation) )
-            return false;
-        
-        for (int i=0; i < std::min(size, patterns.getBound()+1); ++i) {
-            Permutation down = permutation; down.down(i);
-            if ( !avoiders.lookup( down ) ) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
+
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
     std::array<int, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
@@ -57,6 +42,7 @@ namespace rp {
         int actual_size = 2;
         int actual_size_cnt = 1;
         int next_size_cnt = 0;
+        std::array<bool, Permutation::MAX_SIZE> is_avoider;
         
         while ( !unprocessed.empty() ) {
             Permutation& perm = unprocessed.front();
@@ -67,19 +53,15 @@ namespace rp {
 #if DEBUG
             std::cout  << "up\t" << perm << std::endl;
 #endif
-            std::array<bool, Permutation::MAX_SIZE> is_avoider;
             is_avoider.fill(true);
-            
             for (int j=1; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
                 Permutation down = perm; down.down(j);
 #if DEBUG
                 std::cout << "down\t" << down << std::endl;
 #endif
-                int k = -1;
                 for (int i = 0; i < actual_size; ++i) {
-                    if (i!=j) {
-                        if (k >= 0) down.swapNext(k);
-                        k++;
+                    if (i!=j && i > 0) {
+                        down.swapNext( i-1 - (i>j) );
                     }
 #if DEBUG
                     std::cout << "down_\t" << down <<"["<<i<< "," <<j<<"]";
@@ -141,6 +123,7 @@ namespace rp {
 //                std::cout << "\t" << next_size_cnt << " " << next_avoiders.size() << std::endl;
                 
                 avoiders.getTable().clear();
+                avoiders.getTable().reserve(next_size_cnt << 6);
                 std::swap( avoiders, next_avoiders);
 //                for (auto&&p:avoiders.getTable()) {
 //                    std::cout << "Av\t" << p << std::endl;
