@@ -86,6 +86,10 @@ namespace rp {
                     if ( is_avoider[i] == false )
                         std::cout << " _";
 #endif
+                    if ( is_avoider[i] == false ) {
+                        continue;
+                    }
+                    
                     if ( !avoiders.lookup( down ) ) {
                         is_avoider[i] = false;
 #if DEBUG
@@ -102,7 +106,7 @@ namespace rp {
             
             for (int i = 0; i < actual_size; ++i) {
                 if (i > 0) perm.swapNext(i-1);
-                if ( patterns.lookup(perm) )
+                if ( actual_size < patterns.getBound()+1 &&  patterns.lookup(perm) )
                     is_avoider[i] = false;
                 if (is_avoider[i]) {
 #if DEBUG
