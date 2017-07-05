@@ -17,6 +17,8 @@
 #include <utility>
 #include <algorithm>
 
+#define DEBUG 1
+
 namespace rp {
     
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
@@ -58,32 +60,40 @@ namespace rp {
         
         while ( !unprocessed.empty() ) {
             Permutation& perm = unprocessed.front();
-//            std::cout << "pop" << actual_size<<"\t" << perm << std::endl;
+#if DEBUG
+            std::cout  << "pop" << actual_size<<"\t" << perm << std::endl;
+#endif
             perm.up(0, actual_size-1);
-//            std::cout << "up\t" << perm << std::endl;
-            
+#if DEBUG
+            std::cout  << "up\t" << perm << std::endl;
+#endif
             std::array<bool, Permutation::MAX_SIZE> is_avoider;
-            is_avoider.fill( true);
+            is_avoider.fill(true);
+            
             for (int j=0; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
                 Permutation down = perm; down.down(j);
-                
-//                std::cout << "down\t" << downs[j] << std::endl;
-                
+#if DEBUG
+                std::cout << "down\t" << down << std::endl;
+#endif
                 int k = -1;
                 for (int i = 0; i < actual_size; ++i) {
                     if (i==j) continue;
                     if (k >= 0) down.swapNext(k);
                     k++;
-                    
-//                    std::cout << "down_\t" << downs[j] <<"["<<i<< "," <<j<<"]";
-//                    is_avoider[i] = true;
-//                    if ( is_avoider[i] == false )
-//                        std::cout << " _";
+#if DEBUG
+                    std::cout << "down_\t" << down <<"["<<i<< "," <<j<<"]";
+                    if ( is_avoider[i] == false )
+                        std::cout << " _";
+#endif
                     if ( !avoiders.lookup( down ) ) {
                         is_avoider[i] = false;
-//                        std::cout << " no" << std::endl;
+#if DEBUG
+                        std::cout << " no" << std::endl;
+#endif
                     } else {
-//                        std::cout << " ok" << std::endl;
+#if DEBUG
+                        std::cout << " ok" << std::endl;
+#endif
                     }
   
                 }
@@ -94,8 +104,9 @@ namespace rp {
                 if ( patterns.lookup(perm) )
                     is_avoider[i] = false;
                 if (is_avoider[i]) {
-//                    std::cout << "in\t" << perm_ << std::endl;
-                    
+#if DEBUG
+                    std::cout << "in\t" << perm << std::endl;
+#endif
                     next_size_cnt++;
                     auto ins = next_avoiders.insert(perm);
                     assert(ins.second == true); // inserted new
@@ -104,7 +115,9 @@ namespace rp {
                         unprocessed.push(perm);
                     }
                 } else {
-//                    std::cout << "out\t" << perm_ << std::endl;
+#if DEBUG
+                    std::cout << "out\t" << perm << std::endl;
+#endif
                 }
             }
                 
