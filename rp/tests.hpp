@@ -98,7 +98,7 @@ inline bool run_tests_bitwise( std::istream& is) {
         if (test_passed) {
             std::cout << "Test OK" << std::endl;
         }
-        break;
+//        break;
     }
     return all_tests_passed;
 }

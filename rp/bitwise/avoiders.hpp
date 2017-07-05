@@ -58,51 +58,53 @@ namespace rp {
         
         while ( !unprocessed.empty() ) {
             Permutation& perm = unprocessed.front();
-            std::cout << "pop" << actual_size<<"\t" << perm << std::endl;
+//            std::cout << "pop" << actual_size<<"\t" << perm << std::endl;
             perm.up(0, actual_size-1);
-            Permutation perm_ = perm;
-            std::cout << "up\t" << perm << std::endl;
+//            std::cout << "up\t" << perm << std::endl;
             
             std::array<bool, Permutation::MAX_SIZE> is_avoider;
             is_avoider.fill( true);
-            std::array<Permutation, Permutation::MAX_SIZE> downs;
-            for (int j=1; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
-                downs[j] = perm; downs[j].down(j);
-                std::cout << "down\t" << downs[j] << std::endl;
-                for (int i = 0; i < actual_size-1; ++i) {
-//                    if (i==j) continue;
+            for (int j=0; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
+                Permutation down = perm; down.down(j);
+                
+//                std::cout << "down\t" << downs[j] << std::endl;
+                
+                int k = -1;
+                for (int i = 0; i < actual_size; ++i) {
+                    if (i==j) continue;
+                    if (k >= 0) down.swapNext(k);
+                    k++;
                     
-                    if (i > 0) downs[j].swapNext(i-1);
-                    std::cout << "down_\t" << downs[j] <<"["<<j<< "," <<i<<"]";
+//                    std::cout << "down_\t" << downs[j] <<"["<<i<< "," <<j<<"]";
 //                    is_avoider[i] = true;
-                    if ( is_avoider[i] == false )
-                        std::cout << " _";
-                    if ( !avoiders.lookup( downs[j] ) ) {
+//                    if ( is_avoider[i] == false )
+//                        std::cout << " _";
+                    if ( !avoiders.lookup( down ) ) {
                         is_avoider[i] = false;
-                        std::cout << " no" << std::endl;
+//                        std::cout << " no" << std::endl;
                     } else {
-                        std::cout << " ok" << std::endl;
+//                        std::cout << " ok" << std::endl;
                     }
   
                 }
             }
             
             for (int i = 0; i < actual_size; ++i) {
-                if (i > 0) perm_.swapNext(i-1);
-                if ( patterns.lookup(perm_) )
+                if (i > 0) perm.swapNext(i-1);
+                if ( patterns.lookup(perm) )
                     is_avoider[i] = false;
                 if (is_avoider[i]) {
-                    std::cout << "in\t" << perm_ << std::endl;
+//                    std::cout << "in\t" << perm_ << std::endl;
                     
                     next_size_cnt++;
-                    auto ins = next_avoiders.insert(perm_);
+                    auto ins = next_avoiders.insert(perm);
                     assert(ins.second == true); // inserted new
                     
                     if (actual_size+1 < Permutation::MAX_SIZE) {
-                        unprocessed.push(perm_);
+                        unprocessed.push(perm);
                     }
                 } else {
-                    std::cout << "out\t" << perm_ << std::endl;
+//                    std::cout << "out\t" << perm_ << std::endl;
                 }
             }
                 
@@ -118,7 +120,7 @@ namespace rp {
 //                    }
 //                }
                 
-                std::cout << "\t" << next_size_cnt << " " << next_avoiders.size() << std::endl;
+//                std::cout << "\t" << next_size_cnt << " " << next_avoiders.size() << std::endl;
                 
                 avoiders.getTable().clear();
                 std::swap( avoiders, next_avoiders);
