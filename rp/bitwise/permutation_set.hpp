@@ -58,7 +58,6 @@ namespace rp {
             return bound;
         }
         
-    private:
         
         struct Hash {
             
@@ -73,6 +72,7 @@ namespace rp {
             std::hash<ull> hash_function{};
         };
         
+    private:
         unsigned bound = 0;
         std::unordered_set<Permutation, Hash> table;
     };
