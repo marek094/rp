@@ -1,4 +1,5 @@
 Counting Pattern Avoiders
+-----
 Software Project based on the article 'Fast Algorithms for Finding Pattern Avoiders and Counting Pattern Occurrences in Permutations' [1].
 
 [1] William Kuszmaul, https://arxiv.org/abs/1509.08216 
