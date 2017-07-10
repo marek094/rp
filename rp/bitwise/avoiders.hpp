@@ -45,7 +45,8 @@ namespace rp {
     std::array<int, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
         
-        std::unordered_map<Permutation, unsigned, typename PermutationSet::Hash> avoiders, next_avoiders;
+        std::unordered_map<Permutation, std::pair<unsigned, bool>,
+        typename PermutationSet::Hash> avoiders, next_avoiders;
         std::array<int, Permutation::MAX_SIZE> sizes_cnt;
         sizes_cnt.fill(0);
         sizes_cnt[1] = 1;
@@ -53,13 +54,14 @@ namespace rp {
         if (Permutation::MAX_SIZE == 0) return sizes_cnt;
         
         if ( !patterns.lookup(Permutation{}) ) {
-            avoiders.insert({Permutation{},0});
+            avoiders.insert({Permutation{},std::make_pair(0u,true)});
         }
         
         if (Permutation::MAX_SIZE == 1) return sizes_cnt;
         
         for (unsigned actual_size = 2; actual_size < Permutation::MAX_SIZE; ++actual_size) {
             for (auto&& perm_map : avoiders) {
+                if (perm_map.second.second == false) continue;
                 Permutation perm = perm_map.first;
                 unsigned not_avoiders = 0;
 #if DEBUG
@@ -78,7 +80,11 @@ namespace rp {
                             if (i!=j && i > 0) {
                                 down.swapNext( i-1 - (i>j) );
                             }
-                            if (avoiders.find(down) == avoiders.end()) {
+                            auto it = avoiders.find(down);
+                            if (it == avoiders.end()
+                                ||
+                                (it != avoiders.end() && it->second.second == false)
+                                ) {
                                 setBit(not_avoider, i);
                             }
                         }
@@ -98,16 +104,13 @@ namespace rp {
                     for (int j=1; j < patterns.getBound()+1; ++j) {
                         Permutation down = perm; down.down(j);
                         unsigned not_avoider = (1u<<actual_size)-1;
-                        for (int i = 0; i < actual_size; ++i) {
-                            if (i!=j && i > 0) down.swapNext( i-1 - (i>j) );
                             auto it = avoiders.find(down);
-                            if (it != avoiders.end()) {
-                                not_avoider = copyIthBit(it->second, j-1);
-                                break;
-                            }
-                        }
+                            assert (it != avoiders.end());
+                            not_avoider = copyIthBit(it->second.first, j-1);
+
 #if DEBUG
-                        std::cout << "\t@\t\t";
+                        std::cout << std::endl;
+                        std::cout << "\t&\t\t";
                         for (int i=0; i < actual_size; ++i) {
                             bool res = getBit(not_avoider, i);
                             std::cout << res << " ";
@@ -123,9 +126,15 @@ namespace rp {
                         if (i > 0) perm.swapNext(i-1);
                         if ( !getBit(not_avoiders, i) ) {
                             sizes_cnt[actual_size]++;
-                            auto ins = next_avoiders.insert({perm, not_avoiders});
+                            auto ins = next_avoiders.insert({perm, std::make_pair(not_avoiders,
+                                                                                  true)});
+                            assert(ins.second == true); // inserted new
+                        } else {
+                            auto ins = next_avoiders.insert({perm, std::make_pair(not_avoiders,
+                                                                                  false)});
                             assert(ins.second == true); // inserted new
                         }
+                        
                     }
                 } else {
                     sizes_cnt[actual_size] += actual_size - __builtin_popcount(not_avoiders);
@@ -140,8 +149,8 @@ namespace rp {
 //            }
             if (actual_size+1 < Permutation::MAX_SIZE) {
                 avoiders.clear();
-                double coeff = (double)sizes_cnt[actual_size] / (double)sizes_cnt[actual_size-1];
-//                double coeff = 1.0;
+//                double coeff = (double)sizes_cnt[actual_size] / (double)sizes_cnt[actual_size-1];
+                double coeff = 1.0;
                 avoiders.reserve(sizes_cnt[actual_size] * 4 * std::ceil(coeff) );
                 std::swap( avoiders, next_avoiders);
             }
