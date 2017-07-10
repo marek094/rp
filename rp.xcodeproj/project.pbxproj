@@ -31,6 +31,7 @@
 		691F00D01F0A49F6000482D9 /* tests.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tests.txt; sourceTree = "<group>"; };
 		692226D21F0050CA008A59CF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; usesTabs = 1; };
 		6931C7641E59B5CC003A0A7D /* rp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rp; sourceTree = BUILT_PRODUCTS_DIR; };
+		697008C11F0DFE4D00436DF6 /* rp.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = rp.profdata; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +50,7 @@
 			children = (
 				6931C7661E59B5CC003A0A7D /* rp */,
 				6931C7651E59B5CC003A0A7D /* Products */,
+				697008C01F0DFE4D00436DF6 /* OptimizationProfiles */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,6 +73,14 @@
 				692226D21F0050CA008A59CF /* Makefile */,
 			);
 			path = rp;
+			sourceTree = "<group>";
+		};
+		697008C01F0DFE4D00436DF6 /* OptimizationProfiles */ = {
+			isa = PBXGroup;
+			children = (
+				697008C11F0DFE4D00436DF6 /* rp.profdata */,
+			);
+			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +241,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				DEVELOPMENT_TEAM = 55RLN4FDHU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -240,6 +251,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				DEVELOPMENT_TEAM = 55RLN4FDHU;
 				"OTHER_CPLUSPLUSFLAGS[arch=*]" = "-Ofast";
 				PRODUCT_NAME = "$(TARGET_NAME)";

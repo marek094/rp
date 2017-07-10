@@ -21,12 +21,23 @@
 
 namespace rp {
 
+    template <typename U>
+    inline void setBit(U& u, unsigned pos) {
+        u |= U(1) << pos;
+    }
+    
+    template <typename U>
+    inline bool getBit(const U u, unsigned pos) {
+        return (u & (U(1) << pos)) > 0;
+    }
+    
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
     std::array<int, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
-
+        
         PermutationSet avoiders, next_avoiders;
         std::array<int, Permutation::MAX_SIZE> sizes_cnt;
+        sizes_cnt.fill(0);
         sizes_cnt[1] = 1;
         
         if (Permutation::MAX_SIZE == 0) return sizes_cnt;
@@ -37,12 +48,9 @@ namespace rp {
         
         if (Permutation::MAX_SIZE == 1) return sizes_cnt;
         
-        int actual_size = 2;
-        int next_size_cnt = 0;
-        std::array<bool, Permutation::MAX_SIZE> is_avoider;
-        
-        for (; actual_size < Permutation::MAX_SIZE; ++actual_size) {
+        for (int actual_size = 2; actual_size < Permutation::MAX_SIZE; ++actual_size) {
             for (Permutation perm : avoiders.getTable()) {
+                unsigned not_avoiders = 0;
 #if DEBUG
                 std::cout  << "pop" << actual_size<<"\t" << perm << std::endl;
 #endif
@@ -50,27 +58,15 @@ namespace rp {
 #if DEBUG
                 std::cout  << "up\t" << perm << std::endl;
 #endif
-                is_avoider.fill(true);
                 for (int j=1; j < std::min((unsigned)actual_size, patterns.getBound()+1); ++j) {
                     Permutation down = perm; down.down(j);
-#if DEBUG
-                    std::cout << "down\t" << down << std::endl;
-#endif
+                    unsigned not_avoider = 0;
                     for (int i = 0; i < actual_size; ++i) {
                         if (i!=j && i > 0) {
                             down.swapNext( i-1 - (i>j) );
                         }
-#if DEBUG
-                        std::cout << "down_\t" << down <<"["<<i<< "," <<j<<"]";
-                        if ( is_avoider[i] == false )
-                            std::cout << " _";
-#endif
-                        if ( is_avoider[i] == false ) {
-                            continue;
-                        }
-                        
                         if ( !avoiders.lookup( down ) ) {
-                            is_avoider[i] = false;
+                            setBit(not_avoider, i);
 #if DEBUG
                             std::cout << " no" << std::endl;
 #endif
@@ -81,27 +77,32 @@ namespace rp {
                         }
                         
                     }
+                    not_avoiders |= not_avoider;
                 }
                 
-                for (int i = 0; i < actual_size; ++i) {
-                    if (i > 0) perm.swapNext(i-1);
-                    if ( actual_size < patterns.getBound()+1 &&  patterns.lookup(perm) )
-                        is_avoider[i] = false;
-                    if (is_avoider[i]) {
-#if DEBUG
-                        std::cout << "in\t" << perm << std::endl;
-#endif
-                        next_size_cnt++;
-                        if (actual_size+1 < Permutation::MAX_SIZE) {
+                if ( actual_size < patterns.getBound()+1 ) {
+                    Permutation p = perm;
+                    for (int i = 0; i < actual_size; ++i) {
+                        if (i > 0) p.swapNext(i-1);
+                        if ( patterns.lookup(p) )
+                            setBit(not_avoiders, i);
+                    }
+                }
+                
+                if ( actual_size+1 < Permutation::MAX_SIZE ) {
+                    for (int i = 0; i < actual_size; ++i) {
+                        if (i > 0) perm.swapNext(i-1);
+                        if (!getBit(not_avoiders, i) ) {
+                            sizes_cnt[actual_size]++;
                             auto ins = next_avoiders.insert(perm);
                             assert(ins.second == true); // inserted new
                         }
-                    } else {
-#if DEBUG
-                        std::cout << "out\t" << perm << std::endl;
-#endif
                     }
+                } else {
+                    sizes_cnt[actual_size] += actual_size - __builtin_popcount(not_avoiders);
                 }
+                
+        
             }
 //            if (actual_size < 6) {
 //                std::cout << "Avoides " << actual_size << std::endl;
@@ -109,14 +110,13 @@ namespace rp {
 //                    std::cout << p << std::endl;
 //                }
 //            }
-            avoiders.getTable().clear();
-            avoiders.getTable().reserve(next_size_cnt << 6);
-            std::swap( avoiders, next_avoiders);
-            sizes_cnt[actual_size] = next_size_cnt;
-            next_size_cnt = 0;
+            if (actual_size+1 < Permutation::MAX_SIZE) {
+                avoiders.getTable().clear();
+                double coeff = (double)sizes_cnt[actual_size] / (double)sizes_cnt[actual_size-1];
+                avoiders.getTable().reserve(sizes_cnt[actual_size] * 4 * std::ceil(coeff) );
+                std::swap( avoiders, next_avoiders);
+            }
         }
-        
-        sizes_cnt[actual_size] = next_size_cnt;
         return sizes_cnt;
     }
     
