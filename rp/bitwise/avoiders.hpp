@@ -51,13 +51,11 @@ namespace rp {
         sizes_cnt.fill(0);
         sizes_cnt[1] = 1;
         
-        if (Permutation::MAX_SIZE == 0) return sizes_cnt;
+        if (Permutation::MAX_SIZE < 2) return sizes_cnt;
         
         if ( !patterns.lookup(Permutation{}) ) {
             avoiders.insert({Permutation{}, 0u});
         }
-        
-        if (Permutation::MAX_SIZE == 1) return sizes_cnt;
         
         for (unsigned actual_size = 2; actual_size < Permutation::MAX_SIZE; ++actual_size) {
             for (auto&& perm_map : avoiders) {
