@@ -15,7 +15,3 @@ main.o: main.cpp
 
 tests.o: tests.cpp
 	$(CC) $(FLAGS) -c tests.cpp
-
-
-
-
