@@ -16,6 +16,7 @@
 
 namespace rp {
     
+    
     template <unsigned LETTER, unsigned MAX_SIZE = defaultMAXSIZE(LETTER)>
     class PermutationSet {
     public:
@@ -58,6 +59,11 @@ namespace rp {
             return bound;
         }
         
+        PermutationSet& operator=(const PermutationSet& ps) {
+            bound = ps.bound;
+            table = ps.table;
+            return *this;
+        }
         
         struct Hash {
             

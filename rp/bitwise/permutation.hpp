@@ -138,6 +138,19 @@ namespace rp {
             }
         }
         
+        // compute size by number of zeros in permutation
+        // ( 0 0 0 0 0 ) -> 1
+        // ( 2 0 1 3 0 ) -> 4
+        unsigned size() const {
+            int result = MAX_SIZE+1;
+            for (unsigned i = 0; i < MAX_SIZE; ++i) {
+                if (this->operator[](i) == 0) {
+                    result--;
+                }
+            }
+            return (unsigned) result;
+        }
+        
         void swapNext(unsigned pos) {
             const unsigned insoff = pos/LETTERS_PER_WORD;
             const unsigned inspos = (pos%LETTERS_PER_WORD) * LETTER;
@@ -169,13 +182,34 @@ namespace rp {
             }
             
         }
-       
+        
+        template <
+            class Func
+        >
+        void walkChildren(Func&& func) const {
+            Permutation child = *this; child.up(0, size());
+            func((const Permutation)child);
+            for (int i=1; i<size()+1; ++i) {
+                child.swapNext(i-1);
+                func((const Permutation)child);
+            }
+        }
+        
+        template <
+            class Func
+        >
+        void walkDowns(Func&& func) const {
+            for (int i=0; i<size(); i++) {
+                Permutation par = *this; par.down(i);
+                func((const Permutation)par);
+            }
+        }
+        
         // access the nth letter
         unsigned operator[](unsigned pos) const {
             const unsigned insoff = pos/LETTERS_PER_WORD;
             const unsigned inspos = (pos%LETTERS_PER_WORD) * LETTER;
             return (unsigned)(data[ insoff ] >> inspos) & maskOne(LETTER);
-            
         }
         
         bool operator==(const Self& p) const {
@@ -185,6 +219,24 @@ namespace rp {
                 }
             }
             return true;
+        }
+        
+        bool operator<(const Self& p) const {
+            assert(size() == p.size());
+            for (int i=0; i<size(); ++i) {
+                if (this->operator[](i) == p[i]) continue;
+                else return this->operator[](i) < p[i];
+            }
+            return false; // eq
+        }
+
+        bool operator<=(const Self& p) const {
+            assert(size() == p.size());
+            for (int i=0; i<size(); ++i) {
+                if (this->operator[](i) == p[i]) continue;
+                else return this->operator[](i) < p[i];
+            }
+            return true; // eq
         }
         
         ull getWord(unsigned offset) const {
@@ -215,7 +267,7 @@ namespace rp {
     // operator for printing permutation
     template <unsigned LETTER, unsigned MAX_SIZE>
     std::ostream& operator<<(std::ostream& os, const Permutation<LETTER, MAX_SIZE>& p) {
-        for (int i=0; i<MAX_SIZE; ++i) {
+        for (int i=0; i<p.size(); ++i) {
             os << p[i] << " ";
         }
         return os;

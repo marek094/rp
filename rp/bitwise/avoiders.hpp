@@ -66,9 +66,9 @@ namespace rp {
 #endif
                 perm.up(0, actual_size-1);
 #if DEBUG
-                std::cout  << "up\t" << perm << std::endl;
+                std::cout  << "up\t" push<< perm << std::endl;
 #endif
-                // before all patterns are significant in avoiders
+                // before all patterns take shape in avoiders
                 if (actual_size < patterns.getBound()+1) {
                     for (int j=1; j < actual_size; ++j) {
                         Permutation down = perm; down.down(j);
@@ -101,6 +101,7 @@ namespace rp {
                         auto it = avoiders.find(down);
                         if (it == avoiders.end()) {
                             it = others.find(down);
+//                            setBit(not_avoiders, i);
                         }
                         not_avoider = copyIthBit(it->second, j-1);
 
@@ -133,7 +134,7 @@ namespace rp {
                 } else {
                     sizes_cnt[actual_size] += actual_size - __builtin_popcount(not_avoiders);
                 }
-                
+            
             }
 //            if (actual_size < 6) {
 //                std::cout << "Avoides " << actual_size << std::endl;
