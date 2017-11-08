@@ -7,6 +7,7 @@
 //
 
 #include "bitwise/permutation.hpp"
+#include "lib/invariant.hpp"
 #include <iostream>
 #include <vector>
 #include <functional>
@@ -44,49 +45,6 @@ template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T> &v) {
     for (auto&& p : v) os << p;
     return os;
-}
-
-template<class Func>
-class Invariant {
-public:
-    
-    Invariant(std::string name, Func&& f) : f(std::move(f)), name(name) {}
-    explicit Invariant(Func&& f) : f(std::move(f)), name("unnamed") {}
-
-    template<class... Args>
-    bool test(Args&&...args) {
-        bool satisfied = f(std::forward<Args>(args)...);
-//         (res != Result::FAIL);
-        wasAlwaysSatisfied = satisfied && wasAlwaysSatisfied;
-        return satisfied;
-    }
-    
-    bool satisfied() const {
-        return wasAlwaysSatisfied;
-    }
-    
-    std::string result() const {
-        if (this->satisfied()) {
-            return "Invariant " + name + " passed";
-        } else {
-            return "Invariant " + name + " not passed";
-        }
-    }
-    
-private:
-    Func f;
-    std::string name;
-    bool wasAlwaysSatisfied = true;
-};
-
-template<class Func>
-auto make_invariant(Func&& f) {
-    return Invariant<Func>(std::forward<Func>(f));
-}
-
-template<class Func>
-auto make_invariant(std::string&& name, Func&& f) {
-    return Invariant<Func>(std::move(name), std::forward<Func>(f));
 }
 
 auto invA = make_invariant( "A", [](std::vector<int> p, std::vector<int> c, int i) {
