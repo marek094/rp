@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		691F00D11F0A49F6000482D9 /* tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 691F00CE1F0A49F6000482D9 /* tests.cpp */; };
 		692226D31F0050CB008A59CF /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 692226D21F0050CA008A59CF /* Makefile */; };
+		69C3E6B71FB5DD9E00DC853E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69C3E6B61FB5DD9E00DC853E /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,11 +28,10 @@
 		691F00CC1F0A49D4000482D9 /* bitwise */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bitwise; sourceTree = "<group>"; };
 		691F00CD1F0A49D4000482D9 /* simple */ = {isa = PBXFileReference; lastKnownFileType = folder; path = simple; sourceTree = "<group>"; };
 		691F00CE1F0A49F6000482D9 /* tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cpp; sourceTree = "<group>"; };
-		691F00CF1F0A49F6000482D9 /* tests.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tests.hpp; sourceTree = "<group>"; };
-		691F00D01F0A49F6000482D9 /* tests.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tests.txt; sourceTree = "<group>"; };
 		692226D21F0050CA008A59CF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; usesTabs = 1; };
 		6931C7641E59B5CC003A0A7D /* rp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rp; sourceTree = BUILT_PRODUCTS_DIR; };
 		697008C11F0DFE4D00436DF6 /* rp.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = rp.profdata; sourceTree = "<group>"; };
+		69C3E6B61FB5DD9E00DC853E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,8 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				691F00CE1F0A49F6000482D9 /* tests.cpp */,
-				691F00CF1F0A49F6000482D9 /* tests.hpp */,
-				691F00D01F0A49F6000482D9 /* tests.txt */,
+				69C3E6B61FB5DD9E00DC853E /* main.cpp */,
 				691F00CC1F0A49D4000482D9 /* bitwise */,
 				691F00CD1F0A49D4000482D9 /* simple */,
 				692226D21F0050CA008A59CF /* Makefile */,
@@ -143,6 +142,7 @@
 			files = (
 				692226D31F0050CB008A59CF /* Makefile in Sources */,
 				691F00D11F0A49F6000482D9 /* tests.cpp in Sources */,
+				69C3E6B71FB5DD9E00DC853E /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +154,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -201,7 +201,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;

@@ -7,7 +7,7 @@
 #define DEBUG_
 #endif
 
-#include "simple_avoiders.hpp"
+#include "simple/simple_avoiders.hpp"
 #include <iostream>
 #include <utility>
 #include <chrono>
@@ -18,7 +18,7 @@
 #include <tuple>
 
 using namespace std;
-using namespace rp_simple;
+using namespace rp::simple;
 
 void test_avoiders();
 void test_up_down_perm();

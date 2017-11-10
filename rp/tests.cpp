@@ -14,6 +14,27 @@
 #include <iterator>
 #include <vector>
 
+
+// compare two arrays of elements
+template <class ListA, class ListB, bool Verbose = true>
+bool check_result(const ListA &result_seq, const ListB &seq) {
+    bool test_passed = true;
+    for (int i=1; i<result_seq.size() && i<seq.size(); i++) {
+        if (Verbose) std::cout << i << "\t";
+        if (result_seq[i] != seq[i]) {
+            test_passed = false;
+            if (Verbose) std::cout << "NO\t" << result_seq[i] << " ";
+        } else {
+            if (Verbose) std::cout << "OK\t";
+        }
+        if (Verbose) std::cout << seq[i] << std::endl;
+    }
+    if (test_passed) {
+        if (Verbose) std::cout << "Test OK" << std::endl;
+    }
+    return test_passed;
+}
+
 // void run_tests( istream, size_t);
 // - function used testing on known results
 //      - https://math.depaul.edu/bridget/patterns.html
@@ -29,9 +50,9 @@ inline bool run_tests_simple( std::istream& is, std::size_t len) {
     for (std::string pattern_line, seq_line;
          getline(is, pattern_line) && getline(is, seq_line); ) {
         std::istringstream pss{pattern_line}, sss{seq_line};
-        rp_simple::set patterns(
-                                std::istream_iterator< rp_simple::perm>{pss},
-                                std::istream_iterator< rp_simple::perm>{}
+        rp::simple::set patterns(
+                                 std::istream_iterator< rp::simple::perm>{pss},
+                                 std::istream_iterator< rp::simple::perm>{}
                                 );
         std::vector< size_t> seq(
                                  std::istream_iterator< size_t>{sss},
@@ -39,24 +60,11 @@ inline bool run_tests_simple( std::istream& is, std::size_t len) {
                                  );
         
         std::vector< size_t> result_seq(len+1, 0);
-        auto result = rp_simple::build_avoiders(patterns, len);
+        auto result = rp::simple::build_avoiders(patterns, len);
         for (auto&&p : result) {
             result_seq[ p.size() ] ++;
         }
-        bool test_passed = true;
-        for (int i=1; i<result_seq.size() && i<seq.size(); i++) {
-            std::cout << i << "\t";
-            if (result_seq[i] != seq[i]) {
-                all_tests_passed = test_passed = false;
-                std::cout << "NO\t" << result_seq[i] << " ";
-            } else {
-                std::cout << "OK\t";
-            }
-            std::cout << seq[i] << std::endl;
-        }
-        if (test_passed) {
-            std::cout << "Test OK" << std::endl;
-        }
+        all_tests_passed = check_result(result_seq, seq) && all_tests_passed;
     }
     return all_tests_passed;
 }
@@ -85,94 +93,50 @@ inline bool run_tests_bitwise( std::istream& is, Func&& avoiders_func) {
         std::vector< size_t> seq(
                                  std::istream_iterator< size_t>{sss},
                                  std::istream_iterator< size_t>{} );
-        bool test_passed = true;
         auto result = avoiders_func(patterns);
-        for (int i=1; i<result.size() && i<seq.size(); i++) {
-            std::cout << i << "\t";
-            if (result[i] != seq[i]) {
-                all_tests_passed = test_passed = false;
-                std::cout << "NO\t" << result[i] << " ";
-            } else {
-                std::cout << "OK\t";
-            }
-            std::cout << seq[i] << std::endl;
-        }
-        if (test_passed) {
-            std::cout << "Test OK" << std::endl;
-        }
-        //        break;
+        all_tests_passed = check_result(result, seq) && all_tests_passed;
     }
     return all_tests_passed;
 }
 
-
-template <class T> void print(T&& p) {
-    using namespace std;
-//    cout << hex << p.data[3] << " ";
-    cout << hex << p.getWord(2) << " ";
-    cout << hex << p.getWord(1) << " ";
-    cout << hex << p.getWord(0) << endl;
-}
-
-void test_permutation() {
-    
-    using namespace rp;
-    using namespace std;
-    
-    Permutation<4> p;
-    for (int i=0; i<14; ++i) {
-        p.up(i/2,i+1);
-        print(p);
-    }
-    //    p.up(0, 0xa);
-    //    print(p);
-    //    p.up(1, 3);
-    
-    //    for (int i=0; i<20; ++i) {
-    cout << p << endl;
-    p.down(0);
-    cout << p << endl;
-    print(p);
-    p.down(3);
-    cout << p << endl;
-    
-    p.down(8);
-    cout << p << endl;
-    
-    cout << Permutation<8, 10>::WORDS << endl;
-    cout << Permutation<8, 10>::LETTERS_PER_WORD << endl;
-//    return 0;
-}
-
-void test_permutation_set() {
-    using namespace rp;
-    PermutationSet<4> s;
-}
-
-void test_permutation_swap() {
-    std::vector<unsigned> vec{1,0};
-    rp::Permutation<8> p( vec.begin(), vec.end() );
-    
-    std::cout << p << std::endl;
-    p.swapNext(0);
-//    p.swapNext(1);
-    std::cout << p << std::endl;
-}
+enum class Version {
+    SIMPLE, BITWISE, BITWISE_DFS
+};
 
 int main(int argc, char *argv[]) {
-//    
-//    test_permutation_swap();
-//    return 0;
+    
+    constexpr auto SIZE = 9;
+    constexpr auto VERSION = Version::SIMPLE;
     
     if (argc < 2) {
         std::cerr << "Help: ./tests tests_file_path" << std::endl;
         return 0;
     }
+    
     std::ifstream ifs{argv[1]};
-//    int length = atoi(argv[2]);
-    std::cerr << "file " << argv[1] /**< "\tmax_len " << length*/ << std::endl;
-//    bool passed = run_tests_simple(ifs, 10);
-    bool passed = run_tests_bitwise<4,10>(ifs, [](auto&& p){ return rp::buildAvoiders(p); });
+    bool passed = true;
+    switch (VERSION) {
+        case Version::SIMPLE: {
+            passed = run_tests_simple(ifs, SIZE-1);
+            break;
+        } case Version::BITWISE: {
+            passed = run_tests_bitwise<4, SIZE+1>(ifs, [](auto&& p){
+                return rp::buildAvoiders(p); });
+            break;
+        } case Version::BITWISE_DFS: {
+            passed = run_tests_bitwise<4, SIZE+1>(ifs, [](auto&& p){
+                return rp::buildAvoidersDfs(p); });
+            break;
+        }
+    }
     std::cout << passed << std::endl;
-    return 0;
+    return  (int)(!passed);
 }
+
+
+
+
+
+
+
+

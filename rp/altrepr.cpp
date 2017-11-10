@@ -98,25 +98,25 @@ void dfs(unsigned msz, const Perm& p = Perm{}) {
     if (p.size() > msz) return;
 //    std::cout << p << " --> " << convert(p) << std::endl;
     if (p.size() == msz) {
-        std::cout << inverse(p) << "-> " << convert(inverse(p))<< std::endl;
-        std::cout << p << "-> " <<  convert(p) << "  ";
+//        std::cout << inverse(p) << "-> " << convert(inverse(p))<< std::endl;
+//        std::cout << p ;//<< "-> " <<  convert(p) << "  ";
         std::vector<std::vector<int>> a,b;
-        p.walkDownsi( [&p,&a](auto&& c, int i) {
-            a.push_back(convert(c));
-            std::cout << convert(c) << ' ';
-//            std::cout << "\t\t" << c << " --> " << convert(c);
-//            std::cout << (invA.test(convert(p), convert(c), i) ? " k" : " -");
-//            std::cout << (invB.test(convert(p), convert(c), i) ? " k" : " -");
-//
-//            std::cout << std::endl;
-        });
-        std::cout << "  ";
+//        p.walkDownsi( [&p,&a](auto&& c, int i) {
+//            a.push_back(convert(c));
+//            std::cout << convert(c) << ' ';
+////            std::cout << "\t\t" << c << " --> " << convert(c);
+////            std::cout << (invA.test(convert(p), convert(c), i) ? " k" : " -");
+////            std::cout << (invB.test(convert(p), convert(c), i) ? " k" : " -");
+////
+////            std::cout << std::endl;
+//        });
+//        std::cout << "  ";
         downsi(convert(p), [&b](auto&& v){
             b.push_back(v);
         });
 //        std::sort(b.begin(), b.end());
         for (int i=0;i<b.size();++i) {
-            std::cout << b[i] << ' ';
+            std::cout << b[i] << '\n';
         }
 //        std::cout << "  ";
 //        for (int i=0;i<b.size();++i) {
@@ -125,7 +125,7 @@ void dfs(unsigned msz, const Perm& p = Perm{}) {
 //            else
 //                std::cout << b[i] << ' ';
 //        }
-        std::cout << std::endl;
+//        std::cout << std::endl;
         invC.test(a,b,p);
         
     }
@@ -162,32 +162,32 @@ Perm hexToPerm(unsigned hex) {
 
 int main() {
     
-    dfs(5);
-    std::cout << invA.result() << std::endl;
-    std::cout << invB.result() << std::endl;
-    std::cout << invC.result() << std::endl;
-
-    for (auto hv : {0x0,0x01, 0x10, 0x120, 0x41320, 0x0123}) {
-        Perm p = hexToPerm(hv);
-        std::cout << p << " ——> ";
-        auto r = convert(p);
-        std::cout << r << std::endl;
-    }
-    std::vector<Perm> vp {
-        hexToPerm(0x42301),
-        hexToPerm(0x24301),
-        hexToPerm(0x23401),
-        hexToPerm(0x23041),
-        hexToPerm(0x23014),
-    };
-
-    for (auto&& p : vp) {
-        std::cout << p << "->" << convert(p) << ' ';
-        downsi(convert(p), [](auto&& c){
-            std::cout << ' ' << c;
-        });
-        std::cout << std::endl;
-    }
+    dfs(4);
+//    std::cout << invA.result() << std::endl;
+//    std::cout << invB.result() << std::endl;
+//    std::cout << invC.result() << std::endl;
+//
+//    for (auto hv : {0x0,0x01, 0x10, 0x120, 0x41320, 0x0123}) {
+//        Perm p = hexToPerm(hv);
+//        std::cout << p << " ——> ";
+//        auto r = convert(p);
+//        std::cout << r << std::endl;
+//    }
+//    std::vector<Perm> vp {
+//        hexToPerm(0x42301),
+//        hexToPerm(0x24301),
+//        hexToPerm(0x23401),
+//        hexToPerm(0x23041),
+//        hexToPerm(0x23014),
+//    };
+//
+//    for (auto&& p : vp) {
+//        std::cout << p << "->" << convert(p) << ' ';
+//        downsi(convert(p), [](auto&& c){
+//            std::cout << ' ' << c;
+//        });
+//        std::cout << std::endl;
+//    }
 
     
 //    dfs2(5);

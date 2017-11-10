@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <cassert>
 
-namespace rp_simple {
+namespace rp::simple {
   
     // simple types
     using perm = std::string;
@@ -100,7 +100,7 @@ namespace rp_simple {
 #include <queue>
 #include <algorithm>
 
-namespace rp_simple {
+namespace rp::simple {
     
     bool is_avoider(const_set avoiders,
                     const_bounded_set patterns,
@@ -121,14 +121,13 @@ namespace rp_simple {
     set build_avoiders(const_bounded_set patterns, size_t n) {
         set avoiders;
         
-        if (n == 0) return avoiders;
-        
         std::queue<perm> unprocessed;
         if (patterns.find(IDENTITY) == patterns.end()) {
             unprocessed.push(IDENTITY);
             avoiders.insert(IDENTITY);
         }
         
+        if (n == 0) return avoiders;
         if (n == 1) return avoiders;
         
         while (!unprocessed.empty()) {
@@ -197,7 +196,7 @@ namespace rp_simple {
     
 };
 
-namespace rp_simple {
+namespace rp::simple {
     
     size_t count_hits(const_perm permutation, const_bounded_set patterns) {
         hits_table table;
@@ -234,7 +233,7 @@ namespace rp_simple {
     
 };
 
-namespace rp_simple {
+namespace rp::simple {
     
     constexpr auto UNDEFINED = -1;
     
@@ -243,7 +242,7 @@ namespace rp_simple {
         hits_table table;
         auto&& hits = count_hits_bounded(bound_avoiders, permutation, patterns, bound, table);
         assert( hits.size() > 0 );
-        assert( hits[0] != rp_simple::UNDEFINED);
+        assert( hits[0] != rp::simple::UNDEFINED);
         return hits[0] > bound;
     }
     

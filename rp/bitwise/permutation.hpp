@@ -138,6 +138,7 @@ namespace rp {
             }
         }
         
+        // unsigned size() const;
         // compute size by number of zeros in permutation
         // ( 0 0 0 0 0 ) -> 1
         // ( 2 0 1 3 0 ) -> 4
@@ -151,6 +152,9 @@ namespace rp {
             return (unsigned) result;
         }
         
+        // void swapNext(unsigned pos);
+        // - swaps letterns on positions [pos] and [pos+1]
+        // ( 1 0 3 4 ).swapNext(1) -> ( 1 3 0 4)
         void swapNext(unsigned pos) {
             const unsigned insoff = pos/LETTERS_PER_WORD;
             const unsigned inspos = (pos%LETTERS_PER_WORD) * LETTER;
@@ -183,9 +187,11 @@ namespace rp {
             
         }
         
-        template <
-            class Func
-        >
+        // void walkChildren(Func&& func) const;
+        // - similar as high-order std::for_each,
+        //   where elements are children
+        //   ( 0 1 )'s children are: (201) (021) (012)
+        template < class Func >
         void walkChildren(Func&& func) const {
             Permutation child = *this; child.up(0, size());
             func((const Permutation)child);
@@ -196,6 +202,20 @@ namespace rp {
         }
         
         template <
+            class Ret,
+            class Func
+        >
+        Ret reduceChildren(Ret base, Func&& func) const {
+            Permutation child = *this; child.up(0, size());
+            Ret result = func((const Permutation)child, base);
+            for (int i=1; i<size()+1; ++i) {
+                child.swapNext(i-1);
+                result = func((const Permutation)child, result);
+            }
+            return result;
+        }
+    
+        template <
             class Func
         >
         void walkDowns(Func&& func) const {
@@ -205,6 +225,17 @@ namespace rp {
             }
         }
         
+        template <
+        class Func
+        >
+        void walkDownsi(Func&& func) const {
+            for (int i=0; i<size(); i++) {
+                Permutation par = *this; par.down(i);
+                func((const Permutation)par, i);
+            }
+        }
+        
+        // unsigned operator[](unsigned pos) const;
         // access the nth letter
         unsigned operator[](unsigned pos) const {
             const unsigned insoff = pos/LETTERS_PER_WORD;
@@ -230,17 +261,21 @@ namespace rp {
             return false; // eq
         }
 
-        bool operator<=(const Self& p) const {
-            assert(size() == p.size());
-            for (int i=0; i<size(); ++i) {
-                if (this->operator[](i) == p[i]) continue;
-                else return this->operator[](i) < p[i];
-            }
-            return true; // eq
-        }
+        bool operator>(const Self& p) const { return p < *this; }
+        bool operator<=(const Self& p) const {return !(*this > p);}
+        bool operator>=(const Self& p) const {return !(*this < p);}
         
         ull getWord(unsigned offset) const {
             return data[ offset ];
+        }
+        
+        template <class T>
+        T toContainer() const {
+            T res;
+            for (int i=0; i < size(); ++i) {
+                res.push_back(this->operator[](i));
+            }
+            return res;
         }
         
         // static constexpr Self getIdentity();
@@ -268,7 +303,7 @@ namespace rp {
     template <unsigned LETTER, unsigned MAX_SIZE>
     std::ostream& operator<<(std::ostream& os, const Permutation<LETTER, MAX_SIZE>& p) {
         for (int i=0; i<p.size(); ++i) {
-            os << p[i] << " ";
+            os << p[i] << "";
         }
         return os;
     }
