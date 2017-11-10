@@ -2,10 +2,14 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++1z -O2 -march=native
 
 
-.PHONY: clean tt
+.PHONY: clean tt t
 
 clean:
-	ls | sed -e 's/\.cpp//' | sort | uniq -d | tee /dev/stderr | xargs rm
+find . | sed -e 's/\.cpp//' | sort | uniq -d | tee /dev/stderr | xargs rm
 
 tt:
-	time ./tests test/data.txt
+time ./tests test/data.txt
+
+t:
+./tests test/data.txt
+
