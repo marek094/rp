@@ -30,7 +30,6 @@
 		691F00CE1F0A49F6000482D9 /* tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cpp; sourceTree = "<group>"; };
 		692226D21F0050CA008A59CF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; usesTabs = 1; };
 		6931C7641E59B5CC003A0A7D /* rp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rp; sourceTree = BUILT_PRODUCTS_DIR; };
-		697008C11F0DFE4D00436DF6 /* rp.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = rp.profdata; sourceTree = "<group>"; };
 		69C3E6B61FB5DD9E00DC853E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		69C3E6B81FB5E0A400DC853E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		69C3E6B91FB5E0AC00DC853E /* test */ = {isa = PBXFileReference; lastKnownFileType = folder; path = test; sourceTree = "<group>"; };
@@ -52,7 +51,6 @@
 			children = (
 				6931C7661E59B5CC003A0A7D /* rp */,
 				6931C7651E59B5CC003A0A7D /* Products */,
-				697008C01F0DFE4D00436DF6 /* OptimizationProfiles */,
 			);
 			sourceTree = "<group>";
 		};
@@ -76,14 +74,6 @@
 				692226D21F0050CA008A59CF /* Makefile */,
 			);
 			path = rp;
-			sourceTree = "<group>";
-		};
-		697008C01F0DFE4D00436DF6 /* OptimizationProfiles */ = {
-			isa = PBXGroup;
-			children = (
-				697008C11F0DFE4D00436DF6 /* rp.profdata */,
-			);
-			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
