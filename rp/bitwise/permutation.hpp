@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <vector>
 
 namespace rp {
 
@@ -68,6 +69,19 @@ namespace rp {
                 this->up(pos, *it);
                 ++pos;
             }
+        }
+        
+        explicit Permutation(unsigned hex) {
+            auto result = std::vector<int>{};
+            for (int zerocnt = 0;;) {
+                unsigned v = hex % 16;
+                if (v == 0) zerocnt++;
+                if (zerocnt > 1) break;
+                result.push_back(v);
+                hex /= 16;
+            }
+            // backwards
+            *this = Self{result.rbegin(), result.rend()};
         }
         
         // void up(unsigned pos, unsigned size);
