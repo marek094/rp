@@ -26,9 +26,9 @@
 namespace rp {
     
     
-    template <unsigned Threads = 0>
+    template <unsigned Threads = 0> // 0 means std::thread::hardware_concurrency()
     std::pair<std::size_t, std::size_t> getGranulationByThreads(std::size_t work_size) {
-        std::size_t cnt = std::max(Threads, std::thread::hardware_concurrency());
+        std::size_t cnt = Threads > 0 ? Threads : std::thread::hardware_concurrency();
         std::size_t size = (work_size+cnt) / cnt; //(% \in {0..cnt})
         return {cnt, size};
     }
@@ -201,7 +201,7 @@ namespace rp {
             work.reserve(avoiders.size());
             for (auto&& a: avoiders) work.push_back(a.first);
             
-            auto [chunk_cnt, chunk_size] = getGranulationByWork<10000>(work.size());
+            auto [chunk_cnt, chunk_size] = getGranulationByThreads(work.size());
             
             vector<future<unsigned>> fresults;
             for (int t = 0; t < work.size(); t += chunk_size) {
