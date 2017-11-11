@@ -1,6 +1,7 @@
 
 #include "bitwise/avoiders.hpp"
 #include "bitwise/avoiders_dfs.hpp"
+#include "bitwise/avoiders_parallel.hpp"
 #include "bitwise/permutation_set.hpp"
 #include "bitwise/permutation.hpp"
 #include "simple/simple_avoiders.hpp"
@@ -100,13 +101,13 @@ inline bool run_tests_bitwise( std::istream& is, Func&& avoiders_func) {
 }
 
 enum class Version {
-    SIMPLE, BITWISE, BITWISE_DFS
+    SIMPLE, BITWISE, BITWISE_DFS, BITWISE_PARALLEL
 };
 
 int main(int argc, char *argv[]) {
     
-    constexpr auto SIZE = 9;
-    constexpr auto VERSION = Version::SIMPLE;
+    constexpr auto SIZE = 11;
+    constexpr auto VERSION = Version::BITWISE_PARALLEL;
     
     if (argc < 2) {
         std::cerr << "Help: ./tests tests_file_path" << std::endl;
@@ -127,16 +128,12 @@ int main(int argc, char *argv[]) {
             passed = run_tests_bitwise<4, SIZE+1>(ifs, [](auto&& p){
                 return rp::buildAvoidersDfs(p); });
             break;
-        }
+        } case Version::BITWISE_PARALLEL: {
+            passed = run_tests_bitwise<4, SIZE+1>(ifs, [](auto&& p){
+                return rp::buildAvoidersParallel(p); });
+            break;
+        } default: return 1;
     }
     std::cout << passed << std::endl;
     return  (int)(!passed);
 }
-
-
-
-
-
-
-
-
