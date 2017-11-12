@@ -51,7 +51,7 @@ namespace rp {
     template<class Permutation>
     class Record {
     public:
-        enum Tag : char { AVOIDER, OTHER, FIND, NA };
+        enum Tag : char { FIND, AVOIDER, OTHER, NA };
         
         Record() = default;
         Record(Permutation perm, unsigned na)
@@ -213,11 +213,13 @@ namespace rp {
             tmpW.reserve(w.size() * patterns.getBound());
             tmpW.resize(w.size());
             
+            auto notRecordFindPredicate = [](auto&& r1) { return r1.tag != Record::FIND; };
+            
 //            std::sort(w.begin(), w.end(), [](auto&& r1, auto&& r2) {
-//                return (r1.perm < r2.perm) || (r1.perm == r2.perm && r1.tag < r2.tag);
+//                return (r1.perm < r2.perm) || (r1.perm == r2.perm && r1.tag > r2.tag);
 //            });
 //            ^~~~~~~~~~~~~~~~~~ optimized into ~~~~~~~~~~~~~~~~v
-            std::partition(w.begin(), w.end(), [](auto&& r1) { return r1.tag < Record::FIND; });
+            std::partition(w.begin(), w.end(), notRecordFindPredicate);
             for (int k = 0; k < Permutation::WORDS; ++k) {
                 sort64b(w.begin(), w.end(), /* only as temporary */ tmpW.begin(),
                         [k](auto&& r1){ return r1.perm.getWord(k); });
@@ -233,11 +235,10 @@ namespace rp {
 
 //            std::sort(w.begin(), w.end(), [](auto&& r1, auto&& r2) {
 //                // Record::FIND first, then Reason
-//                return (r1.tag > r2.tag) || (r1.tag == r2.tag && r1.for_perm < r2.for_perm);
+//                return (r1.tag < r2.tag) || (r1.tag == r2.tag && r1.for_perm < r2.for_perm);
 //            });
 //            ^~~~~~~~~~~~~~~~~~ optimized into ~~~~~~~~~~~~~~~~v
-            auto it_border = std::remove_if(w.begin(), w.end(),
-                                            [](auto&& r1) { return r1.tag != Record::FIND; });
+            auto it_border = std::remove_if(w.begin(), w.end(), notRecordFindPredicate);
             for (int k = 0; k < Permutation::WORDS; ++k) {
                 sort64b(w.begin(), it_border, /* only as temporary */ tmpW.begin(),
                         [k](auto&& r1){ return r1.for_perm.getWord(k); });
