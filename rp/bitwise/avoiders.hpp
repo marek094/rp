@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
+#include <random>
 
 #define DEBUG 0
 
@@ -42,6 +43,82 @@ namespace rp {
         return lower | (upper << 1);
     }
     
+    template <typename U>
+    inline U getByte(const U u, unsigned pos) {
+        return (u>>(8*pos)) & 0xFF;
+    }
+    
+    template<class Permutation>
+    class Record {
+    public:
+        enum Tag : char { AVOIDER, OTHER, FIND, NA };
+        
+        Record() = default;
+        Record(Permutation perm, unsigned na)
+        : perm(perm), tag(Record::NA), not_avoiders(na) {}
+        Record(std::pair<Permutation, unsigned> p, Tag tag)
+        : perm(p.first), tag(tag), not_avoiders(p.second) {}
+        Record(Permutation perm, unsigned na, Tag tag)
+        : perm(perm), tag(tag), not_avoiders(na) {}
+        inline auto get() const { return std::make_pair(perm, not_avoiders); }
+        inline auto getReason() const {
+            return std::make_pair(for_perm, j);
+        }
+        inline void addReason(Permutation for_perm, unsigned j) {
+            assert(tag == FIND);
+            this->for_perm = for_perm;
+            this->j = j;
+        }
+        
+        // ordered to be well-packed & and fast accesible in std::sort
+        Permutation perm;
+        Tag tag;
+        char j;
+        unsigned not_avoiders;
+        Permutation for_perm;
+    };
+    
+    template<
+        class It,
+        class Func
+    >
+    void sort64b(It begin, It end, It begin2, Func&& select) {
+        using namespace std;
+
+        array<array<unsigned, 256>, 8> ins;
+        for (auto&& p: ins ) fill(p.begin(), p.end(), 0);
+        
+        for (auto it = begin; it != end; ++it) {
+            for (int k = 0; k < 8; ++k) {
+                ins[ k ][ getByte( select(*it), k)+1 ]++;
+            }
+        }
+        for (int i=1; i < 256; ++i) {
+            for (int k = 0; k < 8; ++k) {
+                ins[ k ][ i ] += ins[ k ][i-1];
+            }
+        }
+        
+        auto end2 = begin2 + (end-begin);
+        // 8 times, explicitly because of specialized instruction
+        for (auto it = begin; it != end ; ++it)
+            *next( begin2, ins[ 0 ][ getByte( select(*it), 0) ]++ ) = *it;
+        for (auto it = begin2; it != end2; ++it)
+            *next( begin , ins[ 1 ][ getByte( select(*it), 1) ]++ ) = *it;
+        for (auto it = begin; it != end ; ++it)
+            *next( begin2, ins[ 2 ][ getByte( select(*it), 2) ]++ ) = *it;
+        for (auto it = begin2; it != end2; ++it)
+            *next( begin , ins[ 3 ][ getByte( select(*it), 3) ]++ ) = *it;
+        for (auto it = begin; it != end ; ++it)
+            *next( begin2, ins[ 4 ][ getByte( select(*it), 4) ]++ ) = *it;
+        for (auto it = begin2; it != end2; ++it)
+            *next( begin , ins[ 5 ][ getByte( select(*it), 5) ]++ ) = *it;
+        for (auto it = begin; it != end ; ++it)
+            *next( begin2, ins[ 6 ][ getByte( select(*it), 6) ]++ ) = *it;
+        for (auto it = begin2; it != end2; ++it)
+            *next( begin , ins[ 7 ][ getByte( select(*it), 7) ]++ ) = *it;
+    }
+
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
     std::array<int, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
@@ -108,37 +185,8 @@ namespace rp {
             std::swap( others, next_others);
         }
         
-        class Record {
-        public:
-            enum Tag : char { AVOIDER, OTHER, FIND, NA };
-            
-            Record() = default;
-            Record(Permutation perm, unsigned na)
-                : perm(perm), tag(Record::NA), not_avoiders(na) {}
-            Record(pair<Permutation, unsigned> p, Tag tag)
-                : perm(p.first), tag(tag), not_avoiders(p.second) {}
-            Record(Permutation perm, unsigned na, Tag tag)
-                : perm(perm), tag(tag), not_avoiders(na) {}
-            inline auto get() const { return make_pair(perm, not_avoiders); }
-            inline auto getReason() const {
-//                assert(tag == FIND);
-//                Permutation for_perm = perm.up(j, perm.size()-1);
-                return make_pair(for_perm, j);
-            }
-            inline void addReason(Permutation for_perm, unsigned j) {
-                assert(tag == FIND);
-                this->for_perm = for_perm;
-                this->j = j;
-            }
-        
-            // ordered to be well-packer & and fast accesible in std::sort
-            Permutation perm;
-            Tag tag;
-            char j;
-            unsigned not_avoiders;
-            Permutation for_perm;
-        };
-        
+        using namespace std;
+        using Record = Record<Permutation>;
         vector<Record> w, nextW;
         w.reserve(avoiders.size() + others.size());
         for (auto&& p : avoiders) w.emplace_back(p, Record::AVOIDER);
@@ -146,10 +194,9 @@ namespace rp {
         
         for (; actual_size < Permutation::MAX_SIZE; ++actual_size) {
             
-            nextW.clear();
             // reserve because of iterator invalidation
             w.reserve(w.size() + sizes_cnt[actual_size-1]*patterns.getBound());
-            for (auto&& record : w) {
+            for (const auto& record : w) {
                 if (record.tag == Record::AVOIDER) {
                     Permutation perm = record.perm;
                     perm.up(0, actual_size-1);
@@ -161,10 +208,20 @@ namespace rp {
                     }
                 }
             }
+         
+            auto&& tmpW = nextW;
+            tmpW.reserve(w.size() * patterns.getBound());
+            tmpW.resize(w.size());
             
-            std::sort(w.begin(), w.end(), [](auto&& r1, auto&& r2) {
-                return (r1.perm < r2.perm) || (r1.perm == r2.perm && r1.tag < r2.tag);
-            });
+//            std::sort(w.begin(), w.end(), [](auto&& r1, auto&& r2) {
+//                return (r1.perm < r2.perm) || (r1.perm == r2.perm && r1.tag < r2.tag);
+//            });
+//            ^~~~~~~~~~~~~~~~~~ optimized into ~~~~~~~~~~~~~~~~v
+            std::partition(w.begin(), w.end(), [](auto&& r1) { return r1.tag < Record::FIND; });
+            for (int k = 0; k < Permutation::WORDS; ++k) {
+                sort64b(w.begin(), w.end(), /* only as temporary */ tmpW.begin(),
+                        [k](auto&& r1){ return r1.perm.getWord(k); });
+            }
             
             for (auto it = w.begin(), found_it = it; it != w.end(); ++it) {
                 if (it->tag == Record::FIND) {
@@ -173,19 +230,21 @@ namespace rp {
                     found_it = it;
                 }
             }
-            
+
 //            std::sort(w.begin(), w.end(), [](auto&& r1, auto&& r2) {
 //                // Record::FIND first, then Reason
 //                return (r1.tag > r2.tag) || (r1.tag == r2.tag && r1.for_perm < r2.for_perm);
 //            });
-        
-            auto it_border = std::remove_if(w.begin(), w.end(), [](auto&& r1) {
-                return r1.tag != Record::FIND;
-            });
-            std::sort(w.begin(), it_border, [](auto&& r1, auto&& r2) {
-                return r1.for_perm < r2.for_perm;
-            });
-
+//            ^~~~~~~~~~~~~~~~~~ optimized into ~~~~~~~~~~~~~~~~v
+            auto it_border = std::remove_if(w.begin(), w.end(),
+                                            [](auto&& r1) { return r1.tag != Record::FIND; });
+            for (int k = 0; k < Permutation::WORDS; ++k) {
+                sort64b(w.begin(), it_border, /* only as temporary */ tmpW.begin(),
+                        [k](auto&& r1){ return r1.for_perm.getWord(k); });
+            }
+            
+            nextW.resize(0);
+            
             unsigned not_avoiders = 0;
             // 'Elephant in Cairo':
             Permutation prev_for_perm = w.front().for_perm;
