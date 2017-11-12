@@ -267,12 +267,11 @@ namespace rp {
         }
         
         bool operator<(const Self& p) const {
-            assert(size() == p.size());
-            for (int i=0; i<size(); ++i) {
-                if (this->operator[](i) == p[i]) continue;
-                else return this->operator[](i) < p[i];
+            for (int i=0; i<WORDS; ++i) {
+                if (data[i] == p.data[i]) continue;
+                return data[i] < p.data[i];
             }
-            return false; // eq
+            return 0 < 0;
         }
 
         bool operator>(const Self& p) const { return p < *this; }
