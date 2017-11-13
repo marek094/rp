@@ -108,7 +108,7 @@ namespace rp {
                       ((inspart & mask_upper) << LETTER);
             
             // shift other parts
-            for (int i = insoff+1; i<WORDS; ++i) {
+            for (unsigned i = insoff+1; i<WORDS; ++i) {
                 const ull new_carryletter = data[i] >> last_letter_pos;
                 data[i] = ( data[i] << LETTER ) | carryletter;
                 carryletter = new_carryletter;
@@ -134,13 +134,13 @@ namespace rp {
             ull& delpart = data[ deloff ];
             delpart = ((delpart & mask_lower) | ((delpart & mask_upper) >> LETTER));
             // shift other parts
-            for (int i = deloff+1; i<WORDS; ++i) {
+            for (unsigned i = deloff+1; i<WORDS; ++i) {
                 data[i-1] |= ( maskOne(LETTER) & data[i] ) << first_letter_pos;
                 data[i] = data[i] >> LETTER;
             }
             // decrease all greater
-            for (int i = 0; i<WORDS; ++i) {
-                for (int j = 0; j<LETTERS_PER_WORD; ++j) {
+            for (unsigned i = 0; i<WORDS; ++i) {
+                for (unsigned j = 0; j<LETTERS_PER_WORD; ++j) {
                     // get the right letter
                     const ull letter = (data[i] >> LETTER*j) & maskOne(LETTER);
                     // replace it
@@ -209,7 +209,7 @@ namespace rp {
         void walkChildren(Func&& func) const {
             Permutation child = *this; child.up(0, size());
             func((const Permutation)child);
-            for (int i=1; i<size()+1; ++i) {
+            for (unsigned i=1; i<size()+1; ++i) {
                 child.swapNext(i-1);
                 func((const Permutation)child);
             }
@@ -222,7 +222,7 @@ namespace rp {
         Ret reduceChildren(Ret base, Func&& func) const {
             Permutation child = *this; child.up(0, size());
             Ret result = func((const Permutation)child, base);
-            for (int i=1; i<size()+1; ++i) {
+            for (unsigned i=1; i<size()+1; ++i) {
                 child.swapNext(i-1);
                 result = func((const Permutation)child, result);
             }
@@ -233,7 +233,7 @@ namespace rp {
             class Func
         >
         void walkDowns(Func&& func) const {
-            for (int i=0; i<size(); i++) {
+            for (unsigned i=0; i<size(); i++) {
                 Permutation par = *this; par.down(i);
                 func((const Permutation)par);
             }
@@ -243,7 +243,7 @@ namespace rp {
         class Func
         >
         void walkDownsi(Func&& func) const {
-            for (int i=0; i<size(); i++) {
+            for (unsigned i=0; i<size(); i++) {
                 Permutation par = *this; par.down(i);
                 func((const Permutation)par, i);
             }
@@ -258,7 +258,7 @@ namespace rp {
         }
         
         bool operator==(const Self& p) const {
-            for (int i=0; i<WORDS; ++i) {
+            for (unsigned i=0; i<WORDS; ++i) {
                 if (data[i] != p.data[i]) {
                     return false;
                 }
@@ -268,7 +268,7 @@ namespace rp {
         
         bool operator<(const Self& p) const {
             assert(size() == p.size());
-            for (int i=0; i<size(); ++i) {
+            for (unsigned i=0; i<size(); ++i) {
                 if (this->operator[](i) == p[i]) continue;
                 else return this->operator[](i) < p[i];
             }
@@ -286,7 +286,7 @@ namespace rp {
         template <class T>
         T toContainer() const {
             T res;
-            for (int i=0; i < size(); ++i) {
+            for (unsigned i=0; i < size(); ++i) {
                 res.push_back(this->operator[](i));
             }
             return res;
@@ -297,7 +297,7 @@ namespace rp {
         // in static context
         static constexpr Self getIdentity() {
             Self p;
-            for (int i = 0; i < MAX_SIZE; ++i) {
+            for (unsigned i = 0; i < MAX_SIZE; ++i) {
                 p.up(i, i);
             }
             return p;
@@ -305,7 +305,7 @@ namespace rp {
         
     private:
         void clearData() {
-            for (int i=0; i<WORDS; i++) {
+            for (unsigned i=0; i<WORDS; i++) {
                 data[i] = 0ull;
             }
         }
@@ -316,7 +316,7 @@ namespace rp {
     // operator for printing permutation
     template <unsigned LETTER, unsigned MAX_SIZE>
     std::ostream& operator<<(std::ostream& os, const Permutation<LETTER, MAX_SIZE>& p) {
-        for (int i=0; i<p.size(); ++i) {
+        for (unsigned i=0; i<p.size(); ++i) {
             os << p[i] << "";
         }
         return os;

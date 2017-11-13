@@ -42,12 +42,12 @@ namespace rp {
     }
     
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
-    std::array<int, Permutation::MAX_SIZE>
+    std::array<unsigned, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
         
         using Map = std::unordered_map<Permutation,  unsigned, typename PermutationSet::Hash>;
         Map avoiders, next_avoiders, others, next_others;
-        std::array<int, Permutation::MAX_SIZE> sizes_cnt;
+        std::array<unsigned, Permutation::MAX_SIZE> sizes_cnt;
         sizes_cnt.fill(0);
         sizes_cnt[1] = 1;
         
@@ -70,10 +70,10 @@ namespace rp {
 #endif
                 // before all patterns take shape in avoiders
                 if (actual_size < patterns.getBound()+1) {
-                    for (int j=1; j < actual_size; ++j) {
+                    for (unsigned j=1; j < actual_size; ++j) {
                         Permutation down = perm; down.down(j);
                         unsigned not_avoider = 0;
-                        for (int i = 0; i < actual_size; ++i) {
+                        for (unsigned i = 0; i < actual_size; ++i) {
                             if (i!=j && i > 0) {
                                 down.swapNext( i-1 - (i>j) );
                             }
@@ -85,7 +85,7 @@ namespace rp {
                         not_avoiders |= not_avoider;
                     }
                     Permutation p = perm;
-                    for (int i = 0; i < actual_size; ++i) {
+                    for (unsigned i = 0; i < actual_size; ++i) {
                         if (i > 0) {
                             p.swapNext(i-1);
                         }
@@ -95,7 +95,7 @@ namespace rp {
                     }
                 // if permutations are big enought
                 } else {
-                    for (int j=1; j < patterns.getBound()+1; ++j) {
+                    for (unsigned j=1; j < patterns.getBound()+1; ++j) {
                         Permutation down = perm; down.down(j);
                         unsigned not_avoider = (1u<<actual_size)-1;
                         auto it = avoiders.find(down);
@@ -108,7 +108,7 @@ namespace rp {
 #if DEBUG
                         std::cout << std::endl;
                         std::cout << "\t&\t\t";
-                        for (int i=0; i < actual_size; ++i) {
+                        for (unsigned i=0; i < actual_size; ++i) {
                             bool res = getBit(not_avoider, i);
                             std::cout << res << " ";
                         }
@@ -119,7 +119,7 @@ namespace rp {
                 }
 
                 if ( actual_size+1 < Permutation::MAX_SIZE ) {
-                    for (int i = 0; i < actual_size; ++i) {
+                    for (unsigned i = 0; i < actual_size; ++i) {
                         if (i > 0) perm.swapNext(i-1);
                         if ( !getBit(not_avoiders, i) ) {
                             sizes_cnt[actual_size]++;
