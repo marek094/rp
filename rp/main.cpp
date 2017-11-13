@@ -31,16 +31,15 @@ int main(int argc, const char * argv[]) {
         std::cout << "}" << std::endl;
     }
     
-    auto ppa_result = rp::buildAvoiders(patterns);
-    
-    if (verbose) std::cout << "Avoiding sequence: ";
-    for (unsigned cnt : ppa_result) std::cout << cnt << " ";
-    std::cout << std::endl;
+    try {
+        auto ppa_result = rp::buildAvoiders(patterns);
+        
+        if (verbose) std::cout << "Avoiding sequence: ";
+        for (unsigned cnt : ppa_result) std::cout << cnt << " ";
+        std::cout << std::endl;
+    } catch (const std::bad_alloc& e) {
+        std::cout << "Not enought memory" << e.what() << std::endl;
+    }
     
     return 0;
 }
-
-
-
-
-
