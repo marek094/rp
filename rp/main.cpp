@@ -11,7 +11,7 @@
 #include <vector>
 
 constexpr auto LETTER = 8;
-constexpr auto SIZE = 14;
+constexpr auto SIZE = 12;
 
 int main(int argc, const char * argv[]) {
     
