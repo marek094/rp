@@ -10,8 +10,8 @@
 #include <iostream>
 #include <vector>
 
-constexpr auto LETTER = 8;
-constexpr auto SIZE = 14;
+constexpr auto LETTER = 4;
+constexpr auto SIZE = 10;
 
 int main(int argc, const char * argv[]) {
     
