@@ -70,7 +70,7 @@ namespace rp {
                             Permutation perm) {
         unsigned not_avoiders = 0;
         perm.up(0, size-1);
-        for (int j=1; j < bound+1; ++j) {
+        for (unsigned j=1; j < bound+1; ++j) {
             Permutation down = perm; down.down(j);
             unsigned not_avoider = (1u<<size)-1;
             auto it = avoiders.find(down);
@@ -87,7 +87,7 @@ namespace rp {
     inline void walkSizeUpDown(Permutation perm, unsigned size, Func&& func) {
         perm.up(0, size-1);
         func((const Permutation)perm, 0);
-        for (int i = 1; i < size; ++i) {
+        for (unsigned i = 1; i < size; ++i) {
             perm.swapNext(i-1);
             func((const Permutation)perm, i);
         }
@@ -97,7 +97,7 @@ namespace rp {
     inline void saveNext(Map& next_avoiders, Map& next_others,
                          unsigned not_avoiders, unsigned size,
                          Permutation perm) {
-        walkSizeUpDown(perm, size, [&](auto&& perm, int i) mutable {
+        walkSizeUpDown(perm, size, [&](auto&& perm, unsigned i) mutable {
             if ( !getBit(not_avoiders, i) ) {
                 auto ins = next_avoiders.insert({perm, not_avoiders});
                 assert(ins.second == true); // inserted new
@@ -113,11 +113,11 @@ namespace rp {
         class Permutation = typename PermutationSet::Permutation,
         class Map = std::unordered_map<Permutation, unsigned, typename PermutationSet::Hash>
     >
-    std::array<int, Permutation::MAX_SIZE>
+    std::array<unsigned, Permutation::MAX_SIZE>
     buildAvoidersParallel(const PermutationSet& patterns) {
         
         Map avoiders, next_avoiders, others, next_others;
-        std::array<int, Permutation::MAX_SIZE> sizes_cnt;
+        std::array<unsigned, Permutation::MAX_SIZE> sizes_cnt;
         unsigned bound = patterns.getBound();
         sizes_cnt.fill(0);
         sizes_cnt[1] = 1;
@@ -136,10 +136,10 @@ namespace rp {
                 unsigned not_avoiders = 0;
                 perm.up(0, actual_size-1);
                 // before all patterns take shape in avoiders
-                for (int j=1; j < actual_size; ++j) {
+                for (unsigned j=1; j < actual_size; ++j) {
                     Permutation down = perm; down.down(j);
                     unsigned not_avoider = 0;
-                    for (int i = 0; i < actual_size; ++i) {
+                    for (unsigned i = 0; i < actual_size; ++i) {
                         if (i!=j && i > 0) {
                             down.swapNext( i-1 - (i>j) );
                         }
@@ -150,7 +150,7 @@ namespace rp {
                     }
                     not_avoiders |= not_avoider;
                 }
-                walkSizeUpDown(p.first, actual_size, [&](auto&& perm, int i) mutable {
+                walkSizeUpDown(p.first, actual_size, [&](auto&& perm, unsigned i) mutable {
                     if (patterns.lookup(perm)) {
                         setBit(not_avoiders, i);
                     }
@@ -201,10 +201,11 @@ namespace rp {
             work.reserve(avoiders.size());
             for (auto&& a: avoiders) work.push_back(a.first);
             
-            auto [chunk_cnt, chunk_size] = getGranulationByThreads(work.size());
+            unsigned chunk_cnt, chunk_size;
+            std::tie(chunk_cnt, chunk_size) = getGranulationByThreads(work.size());
             
             vector<future<unsigned>> fresults;
-            for (int t = 0; t < work.size(); t += chunk_size) {
+            for (unsigned t = 0; t < work.size(); t += chunk_size) {
                 future<unsigned> fr = async(launch::async,
                                             runTask,
                                             work.begin()+t,

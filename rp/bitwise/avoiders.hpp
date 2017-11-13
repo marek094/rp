@@ -93,7 +93,7 @@ namespace rp {
                 ins[ k ][ getByte( select(*it), k)+1 ]++;
             }
         }
-        for (int i=1; i < 256; ++i) {
+        for (unsigned i=1; i < 256; ++i) {
             for (int k = 0; k < 8; ++k) {
                 ins[ k ][ i ] += ins[ k ][i-1];
             }
@@ -120,13 +120,13 @@ namespace rp {
     }
 
     template <class PermutationSet, class Permutation = typename PermutationSet::Permutation>
-    std::array<int, Permutation::MAX_SIZE>
+    std::array<unsigned, Permutation::MAX_SIZE>
     buildAvoiders(const PermutationSet& patterns) {
         
         using namespace std;
         using Map = std::unordered_map<Permutation,  unsigned, typename PermutationSet::Hash>;
         Map avoiders, next_avoiders, others, next_others;
-        std::array<int, Permutation::MAX_SIZE> sizes_cnt;
+        std::array<unsigned, Permutation::MAX_SIZE> sizes_cnt;
         sizes_cnt.fill(0);
         sizes_cnt[1] = 1;
         
@@ -144,10 +144,10 @@ namespace rp {
                 unsigned not_avoiders = 0;
                 perm.up(0, actual_size-1);
                 // before all patterns take shape in avoiders
-                for (int j=1; j < actual_size; ++j) {
+                for (unsigned j=1; j < actual_size; ++j) {
                     Permutation down = perm; down.down(j);
                     unsigned not_avoider = 0;
-                    for (int i = 0; i < actual_size; ++i) {
+                    for (unsigned i = 0; i < actual_size; ++i) {
                         if (i!=j && i > 0) {
                             down.swapNext( i-1 - (i>j) );
                         }
@@ -159,7 +159,7 @@ namespace rp {
                     not_avoiders |= not_avoider;
                 }
                 Permutation p = perm;
-                for (int i = 0; i < actual_size; ++i) {
+                for (unsigned i = 0; i < actual_size; ++i) {
                     if (i > 0) {
                         p.swapNext(i-1);
                     }
@@ -167,7 +167,7 @@ namespace rp {
                         setBit(not_avoiders, i);
                     }
                 }
-                for (int i = 0; i < actual_size; ++i) {
+                for (unsigned i = 0; i < actual_size; ++i) {
                     if (i > 0) perm.swapNext(i-1);
                     if ( !getBit(not_avoiders, i) ) {
                         sizes_cnt[actual_size]++;
@@ -201,7 +201,7 @@ namespace rp {
                     Permutation perm = record.perm;
                     perm.up(0, actual_size-1);
                     // if permutations are big enought
-                    for (int j=1; j < patterns.getBound()+1; ++j) {
+                    for (unsigned j=1; j < patterns.getBound()+1; ++j) {
                         Permutation down = perm; down.down(j);
                         w.emplace_back(down, 0, Record::FIND);
                         w.back().addReason(perm, j);
@@ -258,7 +258,7 @@ namespace rp {
                 }
                 // !=
                 if (actual_size+1 < Permutation::MAX_SIZE) {
-                    for (int i = 0; i < actual_size; ++i) {
+                    for (unsigned i = 0; i < actual_size; ++i) {
                         if (i > 0) prev_for_perm.swapNext(i-1);
                         if ( !getBit(not_avoiders, i) ) {
                             sizes_cnt[actual_size]++;

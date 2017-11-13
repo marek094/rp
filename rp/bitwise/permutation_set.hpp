@@ -20,7 +20,7 @@ namespace rp {
     template <unsigned LETTER, unsigned MAX_SIZE = defaultMAXSIZE(LETTER)>
     class PermutationSet {
     public:
-        using Permutation = Permutation<LETTER, MAX_SIZE>;
+        using Permutation = rp::Permutation<LETTER, MAX_SIZE>;
 
         PermutationSet() {}
 
@@ -69,7 +69,7 @@ namespace rp {
             
             ull operator ()(const Permutation& p) const {
                 ull hash = 0;
-                for (int i=0; i<Permutation::WORDS; ++i) {
+                for (unsigned i=0; i<Permutation::WORDS; ++i) {
                     hash ^= hash_function(p.getWord(i)) << i;
                 }
                 return hash;

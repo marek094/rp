@@ -29,7 +29,7 @@ namespace rp {
         unsigned extmap = 0u;
         auto size = p.size();
         p.up(0, size);
-        for (int i=0; i < size+1; ++i) {
+        for (unsigned i=0; i < size+1; ++i) {
             if (i>0) p.swapNext(i-1);
             Permutation downed = p; downed.down(j+1);
             if (avoiders.find(p) != avoiders.end()) {
@@ -62,10 +62,10 @@ namespace rp {
                 
                 perm.up(0, actual_size-1);
 //                std::cout << "# " << perm << std::endl;
-                for (int j=1; j < actual_size; ++j) {
+                for (unsigned j=1; j < actual_size; ++j) {
                     Permutation down = perm; down.down(j);
                     unsigned not_avoider = 0;
-                    for (int i = 0; i < actual_size; ++i) {
+                    for (unsigned i = 0; i < actual_size; ++i) {
                         if (i!=j && i > 0) {
                             down.swapNext( i-1 - (i>j) );
                         }
@@ -76,7 +76,7 @@ namespace rp {
                     }
                     not_avoiders |= not_avoider;
                 }
-                for (int i = 0; i < actual_size; ++i) {
+                for (unsigned i = 0; i < actual_size; ++i) {
                     if (i > 0) perm.swapNext(i-1);
                     if ( !getBit(not_avoiders, i) && !patterns.lookup(perm)) {
                         auto ins = avoiders[actual_size].insert({perm, not_avoiders});
@@ -93,13 +93,13 @@ namespace rp {
         class Permutation = typename PermutationSet::Permutation,
         class Map = std::unordered_map<Permutation, unsigned, typename PermutationSet::Hash>
     >
-    std::array<int, Permutation::MAX_SIZE>
+    std::array<unsigned, Permutation::MAX_SIZE>
     buildAvoidersDfs(const PermutationSet& patterns) {
         
         auto avoiders = buildAvoidersOfPatternsBoundSize(patterns);
 
-        std::array<int, Permutation::MAX_SIZE> result;
-        for (int i=0; i < Permutation::MAX_SIZE; ++i) {
+        std::array<unsigned, Permutation::MAX_SIZE> result;
+        for (unsigned i=0; i < Permutation::MAX_SIZE; ++i) {
             result[i] = avoiders[i].size();
         }
         

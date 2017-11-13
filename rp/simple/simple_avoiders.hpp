@@ -12,7 +12,8 @@
 #include <unordered_map>
 #include <cassert>
 
-namespace rp::simple {
+namespace rp {
+namespace simple {
   
     // simple types
     using perm = std::string;
@@ -94,13 +95,15 @@ namespace rp::simple {
     };
     
     
-};
+}
+}
 
 #include <cassert>
 #include <queue>
 #include <algorithm>
 
-namespace rp::simple {
+namespace rp {
+namespace simple {
     
     bool is_avoider(const_set avoiders,
                     const_bounded_set patterns,
@@ -109,7 +112,7 @@ namespace rp::simple {
         if (patterns.find(permutation) != patterns.end())
             return false;
         
-        for (int i=0; i < patterns.bound()+1 && i < permutation.size(); i++) {
+        for (unsigned i=0; i < patterns.bound()+1 && i < permutation.size(); i++) {
             if (avoiders.find( perm_down(permutation, i) ) == avoiders.end()) {
                 return false;
             }
@@ -134,7 +137,7 @@ namespace rp::simple {
             perm permutation = std::move(unprocessed.front());
             unprocessed.pop();
             
-            for (int i=0; i<permutation.size()+1; i++) {
+            for (int i=0; i<(int)permutation.size()+1; i++) {
                 perm up_permutation = perm_up(permutation, i);
                 if (!is_avoider(avoiders, patterns, up_permutation))
                     continue;
@@ -163,7 +166,7 @@ namespace rp::simple {
         char del = p[position];
         auto rit = result.begin();
         
-        for (int i=0; i<p.size(); i++) {
+        for (unsigned i=0; i<p.size(); i++) {
             if (i == position) continue;
             // normalize
             *rit++ = (p[i] > del ? p[i]-1 : p[i]);
@@ -181,7 +184,7 @@ namespace rp::simple {
         result.resize(p.size()+1);
         auto rit = result.begin();
         
-        int i = 0;
+        unsigned i = 0;
         for (; i < position; i++) {
             *rit++ = p[i];
         }
@@ -194,9 +197,11 @@ namespace rp::simple {
         return result;
     }
     
-};
+}
+}
 
-namespace rp::simple {
+namespace rp {
+namespace simple {
     
     size_t count_hits(const_perm permutation, const_bounded_set patterns) {
         hits_table table;
@@ -216,10 +221,10 @@ namespace rp::simple {
         hits.resize(patterns.bound()+2, 0);
         
         for (int i=(int)patterns.bound(); i>=0; --i) {
-            if (i == permutation.size() &&
+            if (i == (int)permutation.size() &&
                 patterns.find(permutation) != patterns.end()) {
                 hits.at(i) = 1;
-            } else if (i < permutation.size()) {
+            } else if (i < (int)permutation.size()) {
                 perm down_permutation = perm_down(permutation, i);
                 auto&& down_hits = count_hits(down_permutation, patterns, table);
                 
@@ -231,11 +236,13 @@ namespace rp::simple {
     }
     
     
-};
+}
+}
 
-namespace rp::simple {
+namespace rp {
+namespace simple {
     
-    constexpr auto UNDEFINED = -1;
+    constexpr auto UNDEFINED = ~0u;
     
     bool count_hits_bounded(const_set bound_avoiders,
                             const_perm permutation, const_bounded_set patterns, size_t bound) {
@@ -260,10 +267,10 @@ namespace rp::simple {
         hits.resize(patterns.bound()+2, 0);
         
         for (int i=(int)patterns.bound(); i>=0; --i) {
-            if (i == permutation.size() &&
+            if (i == (int)permutation.size() &&
                 patterns.find(permutation) != patterns.end()) {
                 hits.at(i) = 1;
-            } else if (i < permutation.size()) {
+            } else if (i < (int)permutation.size()) {
                 perm down_permutation = perm_down(permutation, i);
                 
                 auto it = bound_avoiders.find(down_permutation);
@@ -306,7 +313,7 @@ namespace rp::simple {
             perm permutation = std::move(unprocessed.front());
             unprocessed.pop();
             
-            for (int i=0; i < permutation.size()+1; ++i) {
+            for (int i=0; i < (int)permutation.size()+1; ++i) {
                 perm up_permutation = perm_up(permutation, i);
                 if (count_hits_bounded(bound_avoiders, permutation, patterns, bound)) {
                     if (up_permutation.size() < n) {
@@ -321,6 +328,7 @@ namespace rp::simple {
         return bound_avoiders;
     }
     
+}
 };
 
 #endif /* simple_avoiders_hpp */

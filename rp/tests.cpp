@@ -20,7 +20,7 @@
 template <class ListA, class ListB, bool Verbose = true>
 bool check_result(const ListA &result_seq, const ListB &seq) {
     bool test_passed = true;
-    for (int i=1; i<result_seq.size() && i<seq.size(); i++) {
+    for (int i=1; i<(int)result_seq.size() && i<(int)seq.size(); i++) {
         if (Verbose) std::cout << i << "\t";
         if (result_seq[i] != seq[i]) {
             test_passed = false;
