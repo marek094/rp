@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++1z -O2 -march=native
+CXXFLAGS = -Wall -pthread -std=c++1z -O2 -march=native
 
 
 .PHONY: clean tt t
