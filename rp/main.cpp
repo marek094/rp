@@ -8,11 +8,15 @@
 #include "bitwise/permutation.hpp"
 #include <string>
 #include <iostream>
+#include <vector>
+
+constexpr auto LETTER = 8;
+constexpr auto SIZE = 14;
 
 int main(int argc, const char * argv[]) {
     
-    constexpr auto LETTER = 4;
-    constexpr auto SIZE = 11;
+    std::vector<std::string> args{argv + 1, argv + argc};
+    bool verbose = args.empty() || args.front() != "-q";
     
     rp::PermutationSet<LETTER, SIZE> patterns;
     for (std::string pattern_string; std::cin >> pattern_string; ) {
@@ -21,16 +25,18 @@ int main(int argc, const char * argv[]) {
         patterns.insert(perm, perm.size());
     }
     
-    std::cout << "Pattern set: { ";
-    for (auto&& p : patterns.getTable()) std::cout << p << " ";
-    std::cout << "}" << std::endl;
+    if (verbose) {
+        std::cout << "Pattern set: { ";
+        for (auto&& p : patterns.getTable()) std::cout << p << " ";
+        std::cout << "}" << std::endl;
+    }
     
     auto ppa_result = rp::buildAvoiders(patterns);
     
-    std::cout << "Avoiding sequence: ";
+    if (verbose) std::cout << "Avoiding sequence: ";
     for (unsigned cnt : ppa_result) std::cout << cnt << " ";
     std::cout << std::endl;
-
+    
     return 0;
 }
 
