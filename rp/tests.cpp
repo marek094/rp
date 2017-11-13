@@ -106,8 +106,8 @@ enum class Version {
 
 int main(int argc, char *argv[]) {
     
-    constexpr auto SIZE = 11;
-    constexpr auto VERSION = Version::BITWISE_PARALLEL;
+    constexpr auto SIZE = 12;
+    constexpr auto VERSION = Version::BITWISE;
     
     if (argc < 2) {
         std::cerr << "Help: ./tests tests_file_path" << std::endl;
